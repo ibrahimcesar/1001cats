@@ -1,0 +1,160 @@
+---
+/**
+ * Comments Component
+ * Giscus-powered comments using GitHub Discussions
+ *
+ * Configuration required:
+ * 1. Enable Discussions in your GitHub repository
+ * 2. Install the Giscus app: https://github.com/apps/giscus
+ * 3. Get your configuration from: https://giscus.app
+ * 4. Update the data attributes below with your settings
+ */
+
+interface Props {
+  title: string;
+}
+
+const { title } = Astro.props;
+---
+
+<div class="comments-section">
+  <h2 class="comments-title">Comments</h2>
+  <p class="comments-description">
+    Join the discussion! Comments are powered by GitHub Discussions.
+  </p>
+
+  <!-- Giscus Comments -->
+  <div
+    class="giscus"
+    data-repo="OWNER/REPO"
+    data-repo-id="REPO_ID"
+    data-category="General"
+    data-category-id="CATEGORY_ID"
+    data-mapping="pathname"
+    data-strict="0"
+    data-reactions-enabled="1"
+    data-emit-metadata="0"
+    data-input-position="top"
+    data-theme="preferred_color_scheme"
+    data-lang="en"
+    data-loading="lazy"
+    crossorigin="anonymous"
+  ></div>
+</div>
+
+<script>
+  function initGiscus() {
+    const giscusContainer = document.querySelector('.giscus');
+
+    if (!giscusContainer) return;
+
+    // Check if script already exists
+    if (document.querySelector('script[src*="giscus"]')) {
+      return;
+    }
+
+    // Create and load Giscus script
+    const script = document.createElement('script');
+    script.src = 'https://giscus.app/client.js';
+    script.async = true;
+    script.crossOrigin = 'anonymous';
+
+    // Copy data attributes from container to script
+    Array.from(giscusContainer.attributes).forEach((attr) => {
+      if (attr.name.startsWith('data-')) {
+        script.setAttribute(attr.name, attr.value);
+      }
+    });
+
+    // Apply theme based on current time-based theme
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const giscusTheme = getGiscusTheme(currentTheme);
+    script.setAttribute('data-theme', giscusTheme);
+
+    giscusContainer.appendChild(script);
+  }
+
+  function getGiscusTheme(currentTheme: string | null): string {
+    // Map time-based themes to Giscus themes
+    switch (currentTheme) {
+      case 'night':
+        return 'dark';
+      case 'evening':
+        return 'dark_dimmed';
+      case 'morning':
+      case 'afternoon':
+      default:
+        return 'light';
+    }
+  }
+
+  // Update Giscus theme when site theme changes
+  function updateGiscusTheme() {
+    const currentTheme = document.documentElement.getAttribute('data-theme');
+    const giscusTheme = getGiscusTheme(currentTheme);
+
+    const iframe = document.querySelector<HTMLIFrameElement>('iframe.giscus-frame');
+    if (iframe && iframe.contentWindow) {
+      iframe.contentWindow.postMessage(
+        {
+          giscus: {
+            setConfig: {
+              theme: giscusTheme,
+            },
+          },
+        },
+        'https://giscus.app'
+      );
+    }
+  }
+
+  // Initialize on page load
+  initGiscus();
+
+  // Re-initialize on Astro page navigation
+  document.addEventListener('astro:page-load', initGiscus);
+
+  // Watch for theme changes
+  const observer = new MutationObserver((mutations) => {
+    mutations.forEach((mutation) => {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'data-theme') {
+        updateGiscusTheme();
+      }
+    });
+  });
+
+  observer.observe(document.documentElement, {
+    attributes: true,
+    attributeFilter: ['data-theme'],
+  });
+</script>
+
+<style>
+  .comments-section {
+    margin-top: 4rem;
+    padding-top: 3rem;
+    border-top: 2px solid var(--border-color);
+  }
+
+  .comments-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 0.5rem;
+  }
+
+  .comments-description {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .giscus {
+    min-height: 200px;
+  }
+
+  /* Giscus iframe styling */
+  .giscus :global(iframe) {
+    width: 100%;
+    border: none;
+  }
+</style>
