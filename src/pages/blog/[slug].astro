@@ -10,6 +10,7 @@ import Header from '../../components/common/Header.astro';
 import Footer from '../../components/common/Footer.astro';
 import Tag from '../../components/ui/Tag.astro';
 import ShareButtons from '../../components/interactive/ShareButtons.astro';
+import ReadingProgress from '../../components/interactive/ReadingProgress.astro';
 import { formatDate, formatRelativeDate } from '../../utils/formatDate';
 import { getReadingTime } from '../../utils/reading-time';
 
@@ -77,6 +78,9 @@ const relatedPosts = allPosts
   image={post.data.image?.url}
 >
   <Header />
+
+  <!-- Reading Progress Bar -->
+  <ReadingProgress />
 
   <main id="main-content" class="main-content">
     <article class="blog-post">
