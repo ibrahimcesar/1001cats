@@ -12,6 +12,7 @@ import Tag from '../../components/ui/Tag.astro';
 import ShareButtons from '../../components/interactive/ShareButtons.astro';
 import ReadingProgress from '../../components/interactive/ReadingProgress.astro';
 import TableOfContents from '../../components/blog/TableOfContents.astro';
+import SeriesNav from '../../components/blog/SeriesNav.astro';
 import Comments from '../../components/interactive/Comments.astro';
 import ImageLightbox from '../../components/interactive/ImageLightbox.astro';
 import { formatDate, formatRelativeDate } from '../../utils/formatDate';
@@ -143,6 +144,15 @@ const relatedPosts = allPosts
           </div>
         </div>
 
+        <!-- Series Navigation -->
+        {post.data.series && post.data.seriesOrder && (
+          <SeriesNav
+            currentSlug={post.slug}
+            series={post.data.series}
+            seriesOrder={post.data.seriesOrder}
+          />
+        )}
+
         <!-- Post Footer -->
         <footer class="post-footer">
           <div class="author-info">
@@ -150,16 +160,6 @@ const relatedPosts = allPosts
               Written by <strong>{post.data.author}</strong>
             </p>
           </div>
-
-          {post.data.series && (
-            <div class="series-info">
-              <p class="series-label">Part of the series:</p>
-              <p class="series-name">{post.data.series}</p>
-              {post.data.seriesOrder && (
-                <p class="series-order">Part {post.data.seriesOrder}</p>
-              )}
-            </div>
-          )}
 
           <!-- Share Buttons -->
           <div class="share-section">
@@ -435,30 +435,6 @@ const relatedPosts = allPosts
   .author-text {
     font-size: 1rem;
     color: var(--text-secondary);
-  }
-
-  .series-info {
-    padding: 1rem;
-    background: var(--bg-secondary);
-    border-radius: 0.5rem;
-    border-left: 4px solid var(--accent-primary);
-  }
-
-  .series-label {
-    font-size: 0.875rem;
-    color: var(--text-secondary);
-    margin-bottom: 0.25rem;
-  }
-
-  .series-name {
-    font-size: 1.125rem;
-    font-weight: 600;
-    margin-bottom: 0.25rem;
-  }
-
-  .series-order {
-    font-size: 0.875rem;
-    color: var(--accent-primary);
   }
 
   .share-section {

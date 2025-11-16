@@ -1,0 +1,516 @@
+---
+/**
+ * 404 Error Page
+ * Custom not found page with Discordian humor
+ */
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/common/Header.astro';
+import Footer from '../components/common/Footer.astro';
+import Card from '../components/ui/Card.astro';
+import Button from '../components/ui/Button.astro';
+import { getCollection } from 'astro:content';
+
+const title = '404: Page Not Found';
+const description = 'This page has achieved quantum superposition and currently exists nowhere.';
+
+// Get recent posts for suggestions
+const allPosts = await getCollection('blog', ({ data }) => {
+  return data.draft !== true;
+});
+
+const recentPosts = allPosts
+  .sort((a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf())
+  .slice(0, 5); // Law of Fives!
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+
+  <main class="main-content">
+    <div class="container">
+      <!-- Hero Section -->
+      <section class="error-hero">
+        <div class="error-number">404</div>
+        <h1 class="error-title">
+          Page Not Found
+        </h1>
+        <p class="error-subtitle">
+          This page has achieved quantum superposition and currently exists in a state of
+          <strong>being and not-being</strong> simultaneously.
+        </p>
+        <div class="error-icon">🐱📦❓</div>
+      </section>
+
+      <!-- Explanation -->
+      <section class="explanation-section">
+        <Card padding="lg">
+          <div class="explanation-content">
+            <h2>What Happened?</h2>
+            <p>
+              Like Schrödinger's famous cat, this page exists in a superposition of states until
+              observed. Unfortunately, upon observation, the wave function collapsed to reveal that
+              this particular URL does not point to any actual content in our reality.
+            </p>
+            <p>
+              Possible explanations include:
+            </p>
+            <ul class="reason-list">
+              <li>The page never existed (most likely)</li>
+              <li>The page existed but has been moved or deleted</li>
+              <li>You're in an alternate timeline where this content doesn't exist</li>
+              <li>The Law of Fives demands you visit exactly five other pages first</li>
+              <li>This is a test from Eris, Goddess of Chaos</li>
+            </ul>
+          </div>
+        </Card>
+      </section>
+
+      <!-- Navigation Options -->
+      <section class="options-section">
+        <h2 class="section-title">What Now?</h2>
+
+        <div class="options-grid">
+          <Card padding="md" hover>
+            <div class="option-card">
+              <span class="option-icon">🏠</span>
+              <h3>Go Home</h3>
+              <p>Return to the main page and start fresh.</p>
+              <Button href="/" variant="primary">
+                Home Page
+              </Button>
+            </div>
+          </Card>
+
+          <Card padding="md" hover>
+            <div class="option-card">
+              <span class="option-icon">📚</span>
+              <h3>Browse Posts</h3>
+              <p>Explore all blog posts and find something interesting.</p>
+              <Button href="/blog" variant="primary">
+                All Posts
+              </Button>
+            </div>
+          </Card>
+
+          <Card padding="md" hover>
+            <div class="option-card">
+              <span class="option-icon">🔍</span>
+              <h3>Search</h3>
+              <p>Use the search feature to find what you're looking for.</p>
+              <Button href="/search" variant="primary">
+                Search
+              </Button>
+            </div>
+          </Card>
+
+          <Card padding="md" hover>
+            <div class="option-card">
+              <span class="option-icon">🍎</span>
+              <h3>About</h3>
+              <p>Learn about this blog and its Discordian philosophy.</p>
+              <Button href="/about" variant="primary">
+                About Page
+              </Button>
+            </div>
+          </Card>
+        </div>
+      </section>
+
+      <!-- Recent Posts -->
+      {recentPosts.length > 0 && (
+        <section class="suggestions-section">
+          <h2 class="section-title">Or Read Something Recent</h2>
+
+          <div class="posts-list">
+            {recentPosts.map((post) => (
+              <Card hover padding="md">
+                <a href={`/blog/${post.slug}`} class="post-link">
+                  <article class="post-item">
+                    <h3 class="post-title">{post.data.title}</h3>
+                    <p class="post-description">{post.data.description}</p>
+                    <div class="post-meta">
+                      <span class="post-category">{post.data.category}</span>
+                      <span class="separator">•</span>
+                      <time datetime={post.data.pubDate.toISOString()}>
+                        {post.data.pubDate.toLocaleDateString('en-US', {
+                          year: 'numeric',
+                          month: 'long',
+                          day: 'numeric',
+                        })}
+                      </time>
+                    </div>
+                  </article>
+                </a>
+              </Card>
+            ))}
+          </div>
+        </section>
+      )}
+
+      <!-- Discordian Wisdom -->
+      <section class="wisdom-section">
+        <Card padding="lg">
+          <div class="wisdom-content">
+            <h2>Discordian Wisdom</h2>
+            <blockquote class="wisdom-quote">
+              <p>
+                "A Discordian is Required During his early Illumination to Go Off Alone & Partake
+                Joyously of a Hot Dog on a Friday; this Devotive Ceremony to Remonstrate against
+                the popular Paganisms of the Day: of Roman Catholic Christendom (no meat on Friday),
+                of Judaism (no meat of Pork), of Hindic Peoples (no meat of Beef), of Buddhists
+                (no meat of animal), and of Discordians (no Hot Dog Buns)."
+              </p>
+              <cite>— Principia Discordia</cite>
+            </blockquote>
+            <p class="wisdom-note">
+              (This has nothing to do with the 404 error, but everything else seemed too serious.)
+            </p>
+          </div>
+        </Card>
+      </section>
+
+      <!-- Error Code -->
+      <section class="error-code-section">
+        <details class="error-details">
+          <summary>Technical Details (For the Curious)</summary>
+          <div class="error-info">
+            <p><strong>HTTP Status Code:</strong> 404 Not Found</p>
+            <p><strong>Requested URL:</strong> <code id="current-url"></code></p>
+            <p><strong>What this means:</strong> The server cannot find the requested resource.</p>
+            <p><strong>What you can do:</strong> Check the URL for typos, use the navigation above, or embrace the chaos.</p>
+          </div>
+        </details>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<script>
+  // Display current URL
+  const urlElement = document.getElementById('current-url');
+  if (urlElement) {
+    urlElement.textContent = window.location.pathname;
+  }
+</script>
+
+<style>
+  .main-content {
+    min-height: 100vh;
+    padding: 3rem 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* Error Hero */
+  .error-hero {
+    text-align: center;
+    margin-bottom: 4rem;
+    padding: 3rem 0;
+  }
+
+  .error-number {
+    font-size: clamp(6rem, 15vw, 12rem);
+    font-weight: 900;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    line-height: 1;
+    margin-bottom: 1rem;
+  }
+
+  .error-title {
+    font-size: clamp(2rem, 5vw, 3.5rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .error-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    max-width: 600px;
+    margin: 0 auto 2rem;
+    line-height: 1.6;
+  }
+
+  .error-subtitle strong {
+    color: var(--accent-primary);
+  }
+
+  .error-icon {
+    font-size: 4rem;
+    margin-top: 2rem;
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse {
+    0%, 100% {
+      transform: scale(1);
+      opacity: 1;
+    }
+    50% {
+      transform: scale(1.1);
+      opacity: 0.8;
+    }
+  }
+
+  /* Explanation Section */
+  .explanation-section {
+    margin-bottom: 3rem;
+  }
+
+  .explanation-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+  }
+
+  .explanation-content p {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+  }
+
+  .reason-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+  }
+
+  .reason-list li {
+    padding: 0.75rem 0 0.75rem 2rem;
+    position: relative;
+    font-size: 1.125rem;
+  }
+
+  .reason-list li::before {
+    content: '⚠️';
+    position: absolute;
+    left: 0;
+    top: 0.75rem;
+  }
+
+  /* Options Section */
+  .options-section {
+    margin-bottom: 3rem;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .options-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .option-card {
+    text-align: center;
+  }
+
+  .option-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .option-card h3 {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+  }
+
+  .option-card p {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 1.5rem;
+    line-height: 1.6;
+  }
+
+  /* Suggestions Section */
+  .suggestions-section {
+    margin-bottom: 3rem;
+  }
+
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .post-link {
+    text-decoration: none;
+    color: inherit;
+    display: block;
+  }
+
+  .post-item {
+    padding: 0;
+  }
+
+  .post-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .post-description {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+    line-height: 1.6;
+  }
+
+  .post-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .post-category {
+    text-transform: capitalize;
+    color: var(--accent-primary);
+    font-weight: 500;
+  }
+
+  .separator {
+    color: var(--border-color);
+  }
+
+  /* Wisdom Section */
+  .wisdom-section {
+    margin-bottom: 3rem;
+  }
+
+  .wisdom-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    text-align: center;
+  }
+
+  .wisdom-quote {
+    border-left: 4px solid var(--accent-primary);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  .wisdom-quote p {
+    font-style: italic;
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .wisdom-quote cite {
+    font-style: normal;
+    font-size: 1rem;
+    color: var(--accent-primary);
+  }
+
+  .wisdom-note {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    text-align: center;
+    font-style: italic;
+  }
+
+  /* Error Code Section */
+  .error-code-section {
+    margin-bottom: 2rem;
+  }
+
+  .error-details {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+  }
+
+  .error-details summary {
+    cursor: pointer;
+    font-weight: 600;
+    padding: 0.5rem;
+    color: var(--text-primary);
+    user-select: none;
+  }
+
+  .error-details summary:hover {
+    color: var(--accent-primary);
+  }
+
+  .error-info {
+    padding: 1rem;
+    margin-top: 1rem;
+    border-top: 1px solid var(--border-color);
+  }
+
+  .error-info p {
+    margin-bottom: 0.75rem;
+    font-size: 0.95rem;
+    line-height: 1.6;
+  }
+
+  .error-info code {
+    background: var(--bg-primary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-family: monospace;
+    font-size: 0.875rem;
+    color: var(--accent-primary);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .main-content {
+      padding: 2rem 0;
+    }
+
+    .error-hero {
+      padding: 2rem 0;
+      margin-bottom: 3rem;
+    }
+
+    .error-icon {
+      font-size: 3rem;
+    }
+
+    .options-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .section-title {
+      font-size: 1.5rem;
+    }
+
+    .explanation-content h2,
+    .wisdom-content h2 {
+      font-size: 1.5rem;
+    }
+  }
+
+  /* Accessibility: Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .error-icon {
+      animation: none;
+    }
+  }
+</style>
