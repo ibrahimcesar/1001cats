@@ -1,0 +1,117 @@
+---
+/**
+ * Button Component
+ * Reusable button with variants
+ */
+
+interface Props {
+  variant?: 'primary' | 'secondary' | 'ghost';
+  size?: 'sm' | 'md' | 'lg';
+  href?: string;
+  type?: 'button' | 'submit' | 'reset';
+  class?: string;
+}
+
+const {
+  variant = 'primary',
+  size = 'md',
+  href,
+  type = 'button',
+  class: className = '',
+} = Astro.props;
+
+const Element = href ? 'a' : 'button';
+const elementProps = href ? { href } : { type };
+---
+
+<Element
+  {...elementProps}
+  class:list={[
+    'btn',
+    `btn-${variant}`,
+    `btn-${size}`,
+    className,
+  ]}
+>
+  <slot />
+</Element>
+
+<style>
+  .btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.5rem;
+    font-weight: 500;
+    text-decoration: none;
+    border-radius: 0.5rem;
+    transition: all 200ms ease;
+    cursor: pointer;
+    border: 1px solid transparent;
+  }
+
+  .btn:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+
+  /* Variants */
+  .btn-primary {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+  }
+
+  .btn-primary:hover {
+    background: var(--accent-secondary);
+    border-color: var(--accent-secondary);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+  }
+
+  .btn-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border-color: var(--border-color);
+  }
+
+  .btn-secondary:hover {
+    background: var(--bg-primary);
+    border-color: var(--accent-primary);
+  }
+
+  .btn-ghost {
+    background: transparent;
+    color: var(--accent-primary);
+  }
+
+  .btn-ghost:hover {
+    background: var(--bg-secondary);
+  }
+
+  /* Sizes */
+  .btn-sm {
+    padding: 0.375rem 0.75rem;
+    font-size: 0.875rem;
+  }
+
+  .btn-md {
+    padding: 0.5rem 1rem;
+    font-size: 1rem;
+  }
+
+  .btn-lg {
+    padding: 0.75rem 1.5rem;
+    font-size: 1.125rem;
+  }
+
+  .btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .btn:disabled:hover {
+    transform: none;
+    box-shadow: none;
+  }
+</style>

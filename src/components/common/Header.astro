@@ -1,0 +1,175 @@
+---
+/**
+ * Header Component
+ * Main site navigation with logo and menu
+ */
+
+const navItems = [
+  { href: '/', label: 'Home' },
+  { href: '/blog', label: 'Blog' },
+  { href: '/about', label: 'About' },
+];
+
+const currentPath = Astro.url.pathname;
+---
+
+<header class="site-header">
+  <div class="container">
+    <nav class="nav-wrapper" aria-label="Main navigation">
+      <!-- Logo/Brand -->
+      <a href="/" class="brand" aria-label="1001cats home">
+        <span class="brand-icon" aria-hidden="true">🍎</span>
+        <span class="brand-text">1001cats</span>
+      </a>
+
+      <!-- Navigation Links -->
+      <ul class="nav-links">
+        {navItems.map(({ href, label }) => (
+          <li>
+            <a
+              href={href}
+              class:list={['nav-link', { active: currentPath === href }]}
+              aria-current={currentPath === href ? 'page' : undefined}
+            >
+              {label}
+            </a>
+          </li>
+        ))}
+      </ul>
+
+      <!-- Mobile Menu Toggle (for future mobile menu) -->
+      <button class="mobile-menu-toggle" aria-label="Toggle menu" aria-expanded="false">
+        <span class="hamburger-icon"></span>
+      </button>
+    </nav>
+  </div>
+</header>
+
+<style>
+  .site-header {
+    position: sticky;
+    top: 0;
+    z-index: 40;
+    background: var(--bg-primary);
+    border-bottom: 1px solid var(--border-color);
+    backdrop-filter: blur(8px);
+    background-color: rgba(var(--bg-primary-rgb, 255, 255, 255), 0.9);
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  .nav-wrapper {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1rem 0;
+  }
+
+  .brand {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 1.5rem;
+    font-weight: 700;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: transform 200ms ease;
+  }
+
+  .brand:hover {
+    transform: scale(1.05);
+  }
+
+  .brand-icon {
+    font-size: 1.75rem;
+  }
+
+  .brand-text {
+    font-family: 'Merriweather', Georgia, serif;
+  }
+
+  .nav-links {
+    display: flex;
+    gap: 2rem;
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  @media (max-width: 640px) {
+    .nav-links {
+      display: none; /* Will be handled by mobile menu */
+    }
+  }
+
+  .nav-link {
+    position: relative;
+    padding: 0.5rem 0;
+    color: var(--text-secondary);
+    text-decoration: none;
+    font-weight: 500;
+    transition: color 200ms ease;
+  }
+
+  .nav-link:hover {
+    color: var(--accent-primary);
+  }
+
+  .nav-link.active {
+    color: var(--accent-primary);
+  }
+
+  .nav-link.active::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 2px;
+    background: var(--accent-primary);
+  }
+
+  .mobile-menu-toggle {
+    display: none;
+    background: transparent;
+    border: none;
+    padding: 0.5rem;
+    cursor: pointer;
+  }
+
+  @media (max-width: 640px) {
+    .mobile-menu-toggle {
+      display: block;
+    }
+  }
+
+  .hamburger-icon {
+    display: block;
+    width: 24px;
+    height: 2px;
+    background: var(--text-primary);
+    position: relative;
+  }
+
+  .hamburger-icon::before,
+  .hamburger-icon::after {
+    content: '';
+    position: absolute;
+    width: 24px;
+    height: 2px;
+    background: var(--text-primary);
+    left: 0;
+  }
+
+  .hamburger-icon::before {
+    top: -8px;
+  }
+
+  .hamburger-icon::after {
+    bottom: -8px;
+  }
+</style>

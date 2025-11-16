@@ -1,0 +1,319 @@
+---
+/**
+ * ThemeManager Component
+ * Handles automatic time-based theme switching with manual override
+ */
+---
+
+<div id="theme-manager" class="theme-controls">
+  <button
+    id="theme-toggle"
+    class="theme-toggle"
+    aria-label="Toggle theme controls"
+    title="Current theme and controls"
+  >
+    <span id="current-theme-icon">🌅</span>
+    <span id="current-theme-name" class="sr-only">Morning</span>
+  </button>
+
+  <div id="theme-menu" class="theme-menu" hidden>
+    <div class="theme-menu-content">
+      <h3 class="text-sm font-semibold mb-2">Time-Based Themes</h3>
+      <p class="text-xs text-[var(--text-secondary)] mb-3">
+        Theme changes based on your local time
+      </p>
+
+      <div class="theme-options">
+        <button class="theme-option" data-theme="auto">
+          <span class="theme-icon">🔄</span>
+          <span class="theme-label">Auto (Current)</span>
+        </button>
+        <button class="theme-option" data-theme="morning">
+          <span class="theme-icon">🌅</span>
+          <span class="theme-label">Morning</span>
+        </button>
+        <button class="theme-option" data-theme="afternoon">
+          <span class="theme-icon">☀️</span>
+          <span class="theme-label">Afternoon</span>
+        </button>
+        <button class="theme-option" data-theme="evening">
+          <span class="theme-icon">🌆</span>
+          <span class="theme-label">Evening</span>
+        </button>
+        <button class="theme-option" data-theme="night">
+          <span class="theme-icon">🌙</span>
+          <span class="theme-label">Night</span>
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  import { getCurrentTheme, getThemeByName, type ThemeName } from '../../utils/time-theme';
+
+  const STORAGE_KEY = 'theme-preference';
+  const THEME_ICONS: Record<string, string> = {
+    auto: '🔄',
+    morning: '🌅',
+    afternoon: '☀️',
+    evening: '🌆',
+    night: '🌙',
+  };
+
+  class ThemeManager {
+    private currentTheme: ThemeName | 'auto' = 'auto';
+    private checkInterval: number | null = null;
+
+    constructor() {
+      this.init();
+    }
+
+    init() {
+      // Load saved preference
+      const saved = localStorage.getItem(STORAGE_KEY);
+      if (saved && ['auto', 'morning', 'afternoon', 'evening', 'night'].includes(saved)) {
+        this.currentTheme = saved as ThemeName | 'auto';
+      }
+
+      // Apply initial theme
+      this.applyTheme();
+
+      // Set up auto-check every minute if in auto mode
+      if (this.currentTheme === 'auto') {
+        this.startAutoCheck();
+      }
+
+      // Set up UI event listeners
+      this.setupUI();
+
+      // Update UI to reflect current selection
+      this.updateUI();
+    }
+
+    applyTheme() {
+      let themeName: ThemeName;
+
+      if (this.currentTheme === 'auto') {
+        themeName = getCurrentTheme().name;
+      } else {
+        themeName = this.currentTheme;
+      }
+
+      // Apply theme to document
+      document.documentElement.setAttribute('data-theme', themeName);
+
+      // Update icon in UI
+      const iconElement = document.getElementById('current-theme-icon');
+      const nameElement = document.getElementById('current-theme-name');
+
+      if (iconElement) {
+        iconElement.textContent = THEME_ICONS[this.currentTheme];
+      }
+
+      if (nameElement) {
+        const theme = this.currentTheme === 'auto'
+          ? getCurrentTheme()
+          : getThemeByName(themeName);
+        nameElement.textContent = theme.label;
+      }
+    }
+
+    setTheme(theme: ThemeName | 'auto') {
+      this.currentTheme = theme;
+
+      // Save preference
+      localStorage.setItem(STORAGE_KEY, theme);
+
+      // Apply theme
+      this.applyTheme();
+
+      // Update UI
+      this.updateUI();
+
+      // Manage auto-check
+      if (theme === 'auto') {
+        this.startAutoCheck();
+      } else {
+        this.stopAutoCheck();
+      }
+    }
+
+    startAutoCheck() {
+      // Check every minute for theme changes
+      this.checkInterval = window.setInterval(() => {
+        if (this.currentTheme === 'auto') {
+          this.applyTheme();
+        }
+      }, 60000); // 60 seconds
+    }
+
+    stopAutoCheck() {
+      if (this.checkInterval !== null) {
+        clearInterval(this.checkInterval);
+        this.checkInterval = null;
+      }
+    }
+
+    setupUI() {
+      const toggle = document.getElementById('theme-toggle');
+      const menu = document.getElementById('theme-menu');
+      const options = document.querySelectorAll('.theme-option');
+
+      // Toggle menu
+      toggle?.addEventListener('click', () => {
+        const isHidden = menu?.hasAttribute('hidden');
+        if (isHidden) {
+          menu?.removeAttribute('hidden');
+        } else {
+          menu?.setAttribute('hidden', '');
+        }
+      });
+
+      // Close menu when clicking outside
+      document.addEventListener('click', (e) => {
+        const target = e.target as HTMLElement;
+        const manager = document.getElementById('theme-manager');
+        if (!manager?.contains(target)) {
+          menu?.setAttribute('hidden', '');
+        }
+      });
+
+      // Theme option clicks
+      options.forEach((option) => {
+        option.addEventListener('click', () => {
+          const theme = option.getAttribute('data-theme') as ThemeName | 'auto';
+          if (theme) {
+            this.setTheme(theme);
+          }
+          menu?.setAttribute('hidden', '');
+        });
+      });
+    }
+
+    updateUI() {
+      const options = document.querySelectorAll('.theme-option');
+      options.forEach((option) => {
+        const theme = option.getAttribute('data-theme');
+        if (theme === this.currentTheme) {
+          option.classList.add('active');
+          option.setAttribute('aria-current', 'true');
+        } else {
+          option.classList.remove('active');
+          option.removeAttribute('aria-current');
+        }
+      });
+    }
+  }
+
+  // Initialize theme manager
+  const themeManager = new ThemeManager();
+
+  // Handle page navigation (for View Transitions API)
+  document.addEventListener('astro:page-load', () => {
+    themeManager.init();
+  });
+</script>
+
+<style>
+  .theme-controls {
+    position: relative;
+  }
+
+  .theme-toggle {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.5rem 0.75rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    cursor: pointer;
+    font-size: 1.25rem;
+    transition: all 200ms ease;
+  }
+
+  .theme-toggle:hover {
+    background: var(--accent-primary);
+    color: white;
+    transform: scale(1.05);
+  }
+
+  .theme-toggle:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+
+  .theme-menu {
+    position: absolute;
+    top: calc(100% + 0.5rem);
+    right: 0;
+    z-index: 50;
+    min-width: 200px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    box-shadow: 0 10px 25px var(--shadow-color);
+    padding: 1rem;
+  }
+
+  .theme-menu[hidden] {
+    display: none;
+  }
+
+  .theme-options {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+  }
+
+  .theme-option {
+    display: flex;
+    align-items: center;
+    gap: 0.75rem;
+    padding: 0.5rem 0.75rem;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: 0.5rem;
+    cursor: pointer;
+    text-align: left;
+    transition: all 200ms ease;
+  }
+
+  .theme-option:hover {
+    background: var(--bg-secondary);
+    border-color: var(--border-color);
+  }
+
+  .theme-option.active {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+  }
+
+  .theme-option:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+
+  .theme-icon {
+    font-size: 1.25rem;
+  }
+
+  .theme-label {
+    font-size: 0.875rem;
+    font-weight: 500;
+  }
+
+  .sr-only {
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+  }
+</style>

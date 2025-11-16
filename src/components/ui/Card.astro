@@ -1,0 +1,61 @@
+---
+/**
+ * Card Component
+ * Content card with optional hover effects
+ */
+
+interface Props {
+  hover?: boolean;
+  padding?: 'none' | 'sm' | 'md' | 'lg';
+  class?: string;
+}
+
+const {
+  hover = false,
+  padding = 'md',
+  class: className = '',
+} = Astro.props;
+---
+
+<div
+  class:list={[
+    'card',
+    `card-padding-${padding}`,
+    { 'card-hover': hover },
+    className,
+  ]}
+>
+  <slot />
+</div>
+
+<style>
+  .card {
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.75rem;
+    transition: all 200ms ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--shadow-color);
+    border-color: var(--accent-primary);
+  }
+
+  /* Padding variants */
+  .card-padding-none {
+    padding: 0;
+  }
+
+  .card-padding-sm {
+    padding: 0.75rem;
+  }
+
+  .card-padding-md {
+    padding: 1.25rem;
+  }
+
+  .card-padding-lg {
+    padding: 2rem;
+  }
+</style>
