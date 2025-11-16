@@ -1,0 +1,512 @@
+---
+/**
+ * Individual Blog Post Page
+ * Dynamic route for displaying individual blog posts
+ */
+
+import { getCollection, type CollectionEntry } from 'astro:content';
+import BaseLayout from '../../layouts/BaseLayout.astro';
+import Header from '../../components/common/Header.astro';
+import Footer from '../../components/common/Footer.astro';
+import Tag from '../../components/ui/Tag.astro';
+import { formatDate, formatRelativeDate } from '../../utils/formatDate';
+import { getReadingTime } from '../../utils/reading-time';
+
+export async function getStaticPaths() {
+  const posts = await getCollection('blog', ({ data }) => {
+    return data.draft !== true;
+  });
+
+  return posts.map((post) => ({
+    params: { slug: post.slug },
+    props: { post },
+  }));
+}
+
+interface Props {
+  post: CollectionEntry<'blog'>;
+}
+
+const { post } = Astro.props;
+const { Content } = await post.render();
+
+const readingTime = getReadingTime(post.body);
+const formattedDate = formatDate(post.data.pubDate);
+const relativeDate = formatRelativeDate(post.data.pubDate);
+
+// Get related posts (same category or shared tags)
+const allPosts = await getCollection('blog', ({ data }) => {
+  return data.draft !== true;
+});
+
+const relatedPosts = allPosts
+  .filter((p) => {
+    if (p.slug === post.slug) return false;
+
+    // Check if same category or shares tags
+    const sameCategory = p.data.category === post.data.category;
+    const sharedTags = p.data.tags?.some(tag => post.data.tags?.includes(tag));
+
+    return sameCategory || sharedTags;
+  })
+  .sort((a, b) => {
+    // Prioritize by number of shared tags
+    const aSharedTags = a.data.tags?.filter(tag => post.data.tags?.includes(tag)).length || 0;
+    const bSharedTags = b.data.tags?.filter(tag => post.data.tags?.includes(tag)).length || 0;
+
+    if (aSharedTags !== bSharedTags) {
+      return bSharedTags - aSharedTags;
+    }
+
+    // Then by recency
+    return b.data.pubDate.valueOf() - a.data.pubDate.valueOf();
+  })
+  .slice(0, 5); // Law of Fives!
+---
+
+<BaseLayout
+  title={post.data.title}
+  description={post.data.description}
+  type="article"
+  publishedTime={post.data.pubDate}
+  modifiedTime={post.data.updatedDate}
+  image={post.data.image?.url}
+>
+  <Header />
+
+  <main id="main-content" class="main-content">
+    <article class="blog-post">
+      <div class="container">
+        <!-- Post Header -->
+        <header class="post-header">
+          <div class="post-meta-header">
+            <a href={`/blog/category/${post.data.category}`} class="post-category">
+              {post.data.category}
+            </a>
+            <span class="separator">•</span>
+            <time datetime={post.data.pubDate.toISOString()} title={formattedDate}>
+              {relativeDate}
+            </time>
+            <span class="separator">•</span>
+            <span class="reading-time">{readingTime.text}</span>
+          </div>
+
+          <h1 class="post-title">{post.data.title}</h1>
+
+          <p class="post-description">{post.data.description}</p>
+
+          {post.data.tags && post.data.tags.length > 0 && (
+            <div class="post-tags">
+              {post.data.tags.map((tag) => (
+                <Tag href={`/blog/tag/${tag}`}>{tag}</Tag>
+              ))}
+            </div>
+          )}
+
+          {post.data.updatedDate && (
+            <p class="post-updated">
+              Last updated: <time datetime={post.data.updatedDate.toISOString()}>
+                {formatDate(post.data.updatedDate)}
+              </time>
+            </p>
+          )}
+        </header>
+
+        <!-- Post Content -->
+        <div class="prose">
+          <Content />
+        </div>
+
+        <!-- Post Footer -->
+        <footer class="post-footer">
+          <div class="author-info">
+            <p class="author-text">
+              Written by <strong>{post.data.author}</strong>
+            </p>
+          </div>
+
+          {post.data.series && (
+            <div class="series-info">
+              <p class="series-label">Part of the series:</p>
+              <p class="series-name">{post.data.series}</p>
+              {post.data.seriesOrder && (
+                <p class="series-order">Part {post.data.seriesOrder}</p>
+              )}
+            </div>
+          )}
+        </footer>
+      </div>
+    </article>
+
+    <!-- Related Posts -->
+    {relatedPosts.length > 0 && (
+      <aside class="related-posts">
+        <div class="container">
+          <h2 class="related-title">Related Posts</h2>
+          <div class="related-grid">
+            {relatedPosts.map((relatedPost) => (
+              <a href={`/blog/${relatedPost.slug}`} class="related-card">
+                <h3 class="related-card-title">{relatedPost.data.title}</h3>
+                <p class="related-card-description">{relatedPost.data.description}</p>
+                <div class="related-card-meta">
+                  <span class="related-card-category">{relatedPost.data.category}</span>
+                  <span class="separator">•</span>
+                  <time datetime={relatedPost.data.pubDate.toISOString()}>
+                    {formatRelativeDate(relatedPost.data.pubDate)}
+                  </time>
+                </div>
+              </a>
+            ))}
+          </div>
+        </div>
+      </aside>
+    )}
+
+    <!-- Navigation -->
+    <nav class="post-navigation">
+      <div class="container">
+        <a href="/blog" class="back-link">← Back to all posts</a>
+      </div>
+    </nav>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .main-content {
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* Post Header */
+  .blog-post {
+    padding: 3rem 0;
+  }
+
+  .post-header {
+    margin-bottom: 3rem;
+    text-align: center;
+  }
+
+  .post-meta-header {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 0.5rem;
+    margin-bottom: 1.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .post-category {
+    text-transform: capitalize;
+    font-weight: 600;
+    color: var(--accent-primary);
+    text-decoration: none;
+    transition: color 200ms ease;
+  }
+
+  .post-category:hover {
+    color: var(--accent-secondary);
+  }
+
+  .separator {
+    color: var(--border-color);
+  }
+
+  .post-title {
+    font-size: clamp(2rem, 5vw, 3rem);
+    font-weight: 800;
+    line-height: 1.2;
+    margin-bottom: 1rem;
+  }
+
+  .post-description {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    line-height: 1.6;
+    margin-bottom: 1.5rem;
+  }
+
+  .post-tags {
+    display: flex;
+    justify-content: center;
+    flex-wrap: wrap;
+    gap: 0.5rem;
+    margin-bottom: 1rem;
+  }
+
+  .post-updated {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    font-style: italic;
+  }
+
+  /* Prose Styling */
+  .prose {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    color: var(--text-primary);
+    margin-bottom: 3rem;
+  }
+
+  .prose :global(h2) {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-top: 2.5rem;
+    margin-bottom: 1rem;
+    line-height: 1.3;
+  }
+
+  .prose :global(h3) {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-top: 2rem;
+    margin-bottom: 0.75rem;
+    line-height: 1.4;
+  }
+
+  .prose :global(h4) {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-top: 1.5rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .prose :global(p) {
+    margin-bottom: 1.5rem;
+  }
+
+  .prose :global(a) {
+    color: var(--accent-primary);
+    text-decoration: underline;
+    text-decoration-thickness: 2px;
+    text-underline-offset: 2px;
+    transition: color 200ms ease;
+  }
+
+  .prose :global(a:hover) {
+    color: var(--accent-secondary);
+  }
+
+  .prose :global(ul),
+  .prose :global(ol) {
+    margin-bottom: 1.5rem;
+    padding-left: 1.5rem;
+  }
+
+  .prose :global(li) {
+    margin-bottom: 0.5rem;
+  }
+
+  .prose :global(blockquote) {
+    border-left: 4px solid var(--accent-primary);
+    padding-left: 1.5rem;
+    margin: 2rem 0;
+    font-style: italic;
+    color: var(--text-secondary);
+  }
+
+  .prose :global(code) {
+    background: var(--bg-secondary);
+    padding: 0.25rem 0.5rem;
+    border-radius: 0.25rem;
+    font-size: 0.9em;
+    font-family: 'Fira Code', monospace;
+  }
+
+  .prose :global(pre) {
+    background: var(--bg-secondary);
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    overflow-x: auto;
+    margin: 2rem 0;
+    border: 1px solid var(--border-color);
+  }
+
+  .prose :global(pre code) {
+    background: none;
+    padding: 0;
+    font-size: 0.875rem;
+  }
+
+  .prose :global(img) {
+    max-width: 100%;
+    height: auto;
+    border-radius: 0.5rem;
+    margin: 2rem 0;
+  }
+
+  .prose :global(hr) {
+    border: none;
+    border-top: 2px solid var(--border-color);
+    margin: 3rem 0;
+  }
+
+  /* Post Footer */
+  .post-footer {
+    padding-top: 2rem;
+    border-top: 2px solid var(--border-color);
+    margin-bottom: 3rem;
+  }
+
+  .author-info {
+    margin-bottom: 1.5rem;
+  }
+
+  .author-text {
+    font-size: 1rem;
+    color: var(--text-secondary);
+  }
+
+  .series-info {
+    padding: 1rem;
+    background: var(--bg-secondary);
+    border-radius: 0.5rem;
+    border-left: 4px solid var(--accent-primary);
+  }
+
+  .series-label {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.25rem;
+  }
+
+  .series-name {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .series-order {
+    font-size: 0.875rem;
+    color: var(--accent-primary);
+  }
+
+  /* Related Posts */
+  .related-posts {
+    background: var(--bg-secondary);
+    padding: 3rem 0;
+  }
+
+  .related-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .related-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .related-card {
+    display: flex;
+    flex-direction: column;
+    gap: 0.75rem;
+    padding: 1.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 200ms ease;
+  }
+
+  .related-card:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px var(--shadow-color);
+  }
+
+  .related-card-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin: 0;
+    color: var(--text-primary);
+  }
+
+  .related-card-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    line-height: 1.5;
+    margin: 0;
+  }
+
+  .related-card-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+  }
+
+  .related-card-category {
+    text-transform: capitalize;
+  }
+
+  /* Navigation */
+  .post-navigation {
+    padding: 2rem 0 3rem;
+    text-align: center;
+  }
+
+  .back-link {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.5rem;
+    background: var(--bg-secondary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    font-weight: 500;
+    transition: all 200ms ease;
+  }
+
+  .back-link:hover {
+    border-color: var(--accent-primary);
+    background: var(--accent-primary);
+    color: white;
+  }
+
+  @media (max-width: 768px) {
+    .blog-post {
+      padding: 2rem 0;
+    }
+
+    .post-meta-header {
+      flex-wrap: wrap;
+      font-size: 0.8125rem;
+    }
+
+    .post-description {
+      font-size: 1.125rem;
+    }
+
+    .prose {
+      font-size: 1rem;
+    }
+
+    .prose :global(h2) {
+      font-size: 1.5rem;
+    }
+
+    .prose :global(h3) {
+      font-size: 1.25rem;
+    }
+
+    .related-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
