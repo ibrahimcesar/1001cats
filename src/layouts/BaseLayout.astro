@@ -7,6 +7,9 @@
 import '../styles/global.css';
 import '../styles/themes.css';
 import ThemeManager from '../components/interactive/ThemeManager.astro';
+import KonamiCode from '../components/easter-eggs/KonamiCode.astro';
+import FnordCounter from '../components/easter-eggs/FnordCounter.astro';
+import PopeCard from '../components/easter-eggs/PopeCard.astro';
 
 interface Props {
   title: string;
@@ -89,6 +92,11 @@ const siteTitle = title ? `${title} | ${siteName}` : siteName;
 
     <!-- Main content slot -->
     <slot />
+
+    <!-- Easter Eggs -->
+    <KonamiCode />
+    <FnordCounter />
+    <PopeCard />
 
     <!-- Inline script for initial theme (prevent flash) -->
     <script is:inline>

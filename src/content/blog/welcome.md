@@ -11,17 +11,17 @@ featured: true
 
 ## Hail Eris! All Hail Discordia! 🍎
 
-Welcome, fellow traveler, to **1001cats** — a humble corner of the internet dedicated to exploring the intersections of science, philosophy, life, the universe, and everything (yes, we know the answer is 42).
+Welcome, fellow traveler, to **1001cats** <span class="fnord">FNORD</span> — a humble corner of the internet dedicated to exploring the intersections of science, philosophy, life, the universe, and everything (yes, we know the answer is 42).
 
 ### What Is This Place?
 
-This blog is an experiment in organized chaos, a digital manifestation of Discordian principles applied to the pursuit of knowledge and understanding. Here, we embrace:
+This blog is an experiment in organized chaos <span class="fnord">FNORD</span>, a digital manifestation of Discordian principles applied to the pursuit of knowledge and understanding. Here, we embrace:
 
 - **🔬 Science** — From quantum mechanics to evolutionary biology
 - **🤔 Philosophy** — Existentialism, epistemology, and everything in between
-- **💻 Technology** — The tools that shape our reality
+- **💻 Technology** — The tools that shape our reality <span class="fnord">FNORD</span>
 - **🍎 Discordianism** — The sacred art of creative chaos
-- **🌌 The Universe** — And our tiny, wonderful place in it
+- **🌌 The Universe** — And our tiny <span class="fnord">FNORD</span>, wonderful place in it
 
 ### The Law of Fives
 
