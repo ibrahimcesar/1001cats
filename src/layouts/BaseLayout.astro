@@ -4,6 +4,7 @@
  * Foundation layout for all pages with SEO, theming, and accessibility
  */
 
+import { ViewTransitions } from 'astro:transitions';
 import '../styles/global.css';
 import '../styles/themes.css';
 import ThemeManager from '../components/interactive/ThemeManager.astro';
@@ -79,6 +80,9 @@ const siteTitle = title ? `${title} | ${siteName}` : siteName;
 
     <!-- Accessibility: Color scheme meta -->
     <meta name="color-scheme" content="light dark" />
+
+    <!-- View Transitions for smooth page navigation -->
+    <ViewTransitions />
   </head>
 
   <body>
