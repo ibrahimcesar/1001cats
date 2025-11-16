@@ -15,8 +15,8 @@
 
 <div class="comments-section">
   <h2 class="comments-title">Comments</h2>
-  <p class="comments-description">
-    Join the discussion! Comments are powered by GitHub Discussions.
+  <p class="comments-encouragement">
+    Do like <strong><span id="non-commenters-count">0</span> people</strong> before you and <strong>NOT LEAVE A COMMENT</strong>. Keep the status quo and ideas and comments in your head. Thank you for the collaboration.
   </p>
 
   <!-- Giscus Comments -->
@@ -38,6 +38,16 @@
 </div>
 
 <script>
+  // Initialize non-commenters count with a random high number
+  function initNonCommentersCount() {
+    const countElement = document.getElementById('non-commenters-count');
+    if (!countElement) return;
+
+    // Generate a random number in the millions (1M to 50M)
+    const randomCount = Math.floor(Math.random() * 49000000) + 1000000;
+    countElement.textContent = randomCount.toLocaleString('en-US');
+  }
+
   function initGiscus() {
     const giscusContainer = document.querySelector('.giscus');
 
@@ -104,10 +114,14 @@
   }
 
   // Initialize on page load
+  initNonCommentersCount();
   initGiscus();
 
   // Re-initialize on Astro page navigation
-  document.addEventListener('astro:page-load', initGiscus);
+  document.addEventListener('astro:page-load', () => {
+    initNonCommentersCount();
+    initGiscus();
+  });
 
   // Watch for theme changes
   const observer = new MutationObserver((mutations) => {
@@ -137,10 +151,20 @@
     margin-bottom: 0.5rem;
   }
 
-  .comments-description {
+  .comments-encouragement {
     font-size: 1rem;
     color: var(--text-secondary);
     margin-bottom: 2rem;
+    line-height: 1.6;
+  }
+
+  .comments-encouragement strong {
+    color: var(--text-primary);
+  }
+
+  .comments-encouragement #non-commenters-count {
+    color: var(--accent-primary);
+    font-weight: 700;
   }
 
   .giscus {

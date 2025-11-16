@@ -15,9 +15,11 @@ import TableOfContents from '../../components/blog/TableOfContents.astro';
 import SeriesNav from '../../components/blog/SeriesNav.astro';
 import Comments from '../../components/interactive/Comments.astro';
 import ImageLightbox from '../../components/interactive/ImageLightbox.astro';
+import EntitiesCounter from '../../components/interactive/EntitiesCounter.astro';
 import { formatDate, formatRelativeDate } from '../../utils/formatDate';
 import { getReadingTime } from '../../utils/reading-time';
 import { generateToc, shouldShowToc } from '../../utils/toc';
+import { formatDiscordianDate } from '../../utils/discordianDate';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => {
@@ -40,6 +42,7 @@ const { Content } = await post.render();
 const readingTime = getReadingTime(post.body);
 const formattedDate = formatDate(post.data.pubDate);
 const relativeDate = formatRelativeDate(post.data.pubDate);
+const discordianDate = formatDiscordianDate(post.data.pubDate);
 
 // Get full URL for sharing
 const postUrl = new URL(`/blog/${post.slug}`, Astro.site).toString();
@@ -101,8 +104,9 @@ const relatedPosts = allPosts
               {post.data.category}
             </a>
             <span class="separator">•</span>
-            <time datetime={post.data.pubDate.toISOString()} title={formattedDate}>
-              {relativeDate}
+            <time datetime={post.data.pubDate.toISOString()} title={formattedDate} class="discordian-date">
+              {discordianDate.discordian}
+              <span class="gregorian-date">({discordianDate.gregorian})</span>
             </time>
             <span class="separator">•</span>
             <span class="reading-time">{readingTime.text}</span>
@@ -127,6 +131,11 @@ const relatedPosts = allPosts
               </time>
             </p>
           )}
+
+          <!-- Entities Counter -->
+          <div class="entities-wrapper">
+            <EntitiesCounter />
+          </div>
         </header>
 
         <!-- Content with TOC -->
@@ -259,6 +268,19 @@ const relatedPosts = allPosts
     color: var(--border-color);
   }
 
+  .discordian-date {
+    display: inline-flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 0.125rem;
+  }
+
+  .gregorian-date {
+    font-size: 0.7em;
+    opacity: 0.7;
+    font-weight: normal;
+  }
+
   .post-title {
     font-size: clamp(2rem, 5vw, 3rem);
     font-weight: 800;
@@ -285,6 +307,12 @@ const relatedPosts = allPosts
     font-size: 0.875rem;
     color: var(--text-secondary);
     font-style: italic;
+  }
+
+  .entities-wrapper {
+    display: flex;
+    justify-content: center;
+    margin-top: 1.5rem;
   }
 
   /* Content with TOC Layout */
