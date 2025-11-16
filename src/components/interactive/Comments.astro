@@ -10,11 +10,7 @@
  * 4. Update the data attributes below with your settings
  */
 
-interface Props {
-  title: string;
-}
-
-const { title } = Astro.props;
+// No props needed - Giscus uses pathname for mapping
 ---
 
 <div class="comments-section">
@@ -38,7 +34,6 @@ const { title } = Astro.props;
     data-theme="preferred_color_scheme"
     data-lang="en"
     data-loading="lazy"
-    crossorigin="anonymous"
   ></div>
 </div>
 

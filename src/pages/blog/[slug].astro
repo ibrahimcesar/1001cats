@@ -13,6 +13,7 @@ import ShareButtons from '../../components/interactive/ShareButtons.astro';
 import ReadingProgress from '../../components/interactive/ReadingProgress.astro';
 import TableOfContents from '../../components/blog/TableOfContents.astro';
 import Comments from '../../components/interactive/Comments.astro';
+import ImageLightbox from '../../components/interactive/ImageLightbox.astro';
 import { formatDate, formatRelativeDate } from '../../utils/formatDate';
 import { getReadingTime } from '../../utils/reading-time';
 import { generateToc, shouldShowToc } from '../../utils/toc';
@@ -171,7 +172,7 @@ const relatedPosts = allPosts
         </footer>
 
         <!-- Comments -->
-        <Comments title={post.data.title} />
+        <Comments />
       </div>
     </article>
 
@@ -208,6 +209,7 @@ const relatedPosts = allPosts
   </main>
 
   <Footer />
+  <ImageLightbox />
 </BaseLayout>
 
 <style>

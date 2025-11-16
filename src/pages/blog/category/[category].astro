@@ -108,7 +108,7 @@ const categoryDescription = categoryDescriptions[category] || `Exploring ${categ
 
                     {post.data.tags && post.data.tags.length > 0 && (
                       <div class="post-tags">
-                        {post.data.tags.map((tag) => (
+                        {post.data.tags.map((tag: string) => (
                           <Tag href={`/blog/tag/${tag}`} size="sm">
                             {tag}
                           </Tag>

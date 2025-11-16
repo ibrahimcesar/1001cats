@@ -149,7 +149,7 @@ const hasWebShare = typeof navigator !== 'undefined' && 'share' in navigator;
           });
         } catch (err) {
           // User cancelled or share failed
-          if (err.name !== 'AbortError') {
+          if (err instanceof Error && err.name !== 'AbortError') {
             console.error('Share failed:', err);
           }
         }
