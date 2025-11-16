@@ -1,0 +1,66 @@
+/* Time-Based Theme System for 1001cats Blog */
+
+/* 🌅 Morning Theme (6am - 12pm) */
+[data-theme="morning"] {
+  --bg-primary: #fef9f3;
+  --bg-secondary: #fff4e6;
+  --text-primary: #2d2d2d;
+  --text-secondary: #6b5d54;
+  --accent-primary: #ff8c42;
+  --accent-secondary: #ff6b1a;
+  --border-color: #f4dcc4;
+  --shadow-color: rgba(255, 140, 66, 0.1);
+}
+
+/* ☀️ Afternoon Theme (12pm - 6pm) */
+[data-theme="afternoon"] {
+  --bg-primary: #ffffff;
+  --bg-secondary: #f0f9ff;
+  --text-primary: #1e293b;
+  --text-secondary: #64748b;
+  --accent-primary: #0ea5e9;
+  --accent-secondary: #0284c7;
+  --border-color: #e0f2fe;
+  --shadow-color: rgba(14, 165, 233, 0.1);
+}
+
+/* 🌆 Evening Theme (6pm - 10pm) */
+[data-theme="evening"] {
+  --bg-primary: #f5f3f0;
+  --bg-secondary: #e8e4df;
+  --text-primary: #3a3331;
+  --text-secondary: #6d5d52;
+  --accent-primary: #d97706;
+  --accent-secondary: #b45309;
+  --border-color: #d6cdc4;
+  --shadow-color: rgba(217, 119, 6, 0.12);
+}
+
+/* 🌙 Night Theme (10pm - 6am) */
+[data-theme="night"] {
+  --bg-primary: #0f172a;
+  --bg-secondary: #1e293b;
+  --text-primary: #e2e8f0;
+  --text-secondary: #94a3b8;
+  --accent-primary: #818cf8;
+  --accent-secondary: #6366f1;
+  --border-color: #334155;
+  --shadow-color: rgba(129, 140, 248, 0.15);
+}
+
+/* Smooth theme transitions */
+:root,
+[data-theme] {
+  transition:
+    background-color 300ms ease-in-out,
+    color 300ms ease-in-out,
+    border-color 300ms ease-in-out;
+}
+
+/* Respect user's reduced motion preference */
+@media (prefers-reduced-motion: reduce) {
+  :root,
+  [data-theme] {
+    transition: none;
+  }
+}
