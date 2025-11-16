@@ -1,0 +1,465 @@
+---
+/**
+ * Homepage
+ * Landing page with hero, featured posts, and theme showcase
+ */
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/common/Header.astro';
+import Footer from '../components/common/Footer.astro';
+import Button from '../components/ui/Button.astro';
+import Card from '../components/ui/Card.astro';
+import { getCollection } from 'astro:content';
+import { getCurrentTheme, getAllThemes } from '../utils/time-theme';
+
+// Get featured and recent posts
+const allPosts = await getCollection('blog', ({ data }) => {
+  return data.draft !== true;
+});
+
+const sortedPosts = allPosts.sort(
+  (a, b) => b.data.pubDate.valueOf() - a.data.pubDate.valueOf()
+);
+
+const featuredPosts = sortedPosts.filter(post => post.data.featured).slice(0, 3);
+const recentPosts = sortedPosts.slice(0, 5); // Law of Fives!
+
+const currentTheme = getCurrentTheme();
+const allThemes = getAllThemes();
+---
+
+<BaseLayout
+  title="Home"
+  description="A Discordian blog on science, philosophy, life, the universe, and everything"
+>
+  <Header />
+
+  <main id="main-content" class="main-content">
+    <!-- Hero Section -->
+    <section class="hero">
+      <div class="container">
+        <div class="hero-content">
+          <h1 class="hero-title">
+            <span class="wave">🍎</span>
+            Welcome to 1001cats
+          </h1>
+          <p class="hero-subtitle">
+            A Discordian blog exploring science, philosophy, life, the universe, and everything
+          </p>
+          <p class="hero-description">
+            Embrace the chaos. Question everything. Find meaning in the absurd.
+          </p>
+          <div class="hero-actions">
+            <Button href="/blog" variant="primary" size="lg">
+              Explore the Blog
+            </Button>
+            <Button href="/about" variant="secondary" size="lg">
+              About This Madness
+            </Button>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Current Theme Indicator -->
+    <section class="theme-indicator">
+      <div class="container">
+        <Card padding="md">
+          <div class="theme-info">
+            <span class="theme-icon">{currentTheme.icon}</span>
+            <div>
+              <h3 class="theme-name">Currently: {currentTheme.label} Theme</h3>
+              <p class="theme-description">{currentTheme.description}</p>
+            </div>
+          </div>
+        </Card>
+      </div>
+    </section>
+
+    <!-- Featured Posts -->
+    {featuredPosts.length > 0 && (
+      <section class="section featured-section">
+        <div class="container">
+          <h2 class="section-title">Featured Posts</h2>
+          <div class="posts-grid">
+            {featuredPosts.map((post) => (
+              <Card hover padding="lg">
+                <article class="post-card">
+                  <h3 class="post-title">
+                    <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+                  </h3>
+                  <p class="post-description">{post.data.description}</p>
+                  <div class="post-meta">
+                    <span class="post-category">{post.data.category}</span>
+                    <span class="post-date">
+                      {post.data.pubDate.toLocaleDateString('en-US', {
+                        year: 'numeric',
+                        month: 'long',
+                        day: 'numeric',
+                      })}
+                    </span>
+                  </div>
+                </article>
+              </Card>
+            ))}
+          </div>
+        </div>
+      </section>
+    )}
+
+    <!-- Recent Posts -->
+    <section class="section">
+      <div class="container">
+        <h2 class="section-title">Recent Posts</h2>
+        <div class="posts-list">
+          {recentPosts.map((post) => (
+            <Card hover padding="md">
+              <article class="post-item">
+                <h3 class="post-item-title">
+                  <a href={`/blog/${post.slug}`}>{post.data.title}</a>
+                </h3>
+                <p class="post-item-description">{post.data.description}</p>
+                <div class="post-item-meta">
+                  <span class="post-category">{post.data.category}</span>
+                  <span class="separator">•</span>
+                  <time datetime={post.data.pubDate.toISOString()}>
+                    {post.data.pubDate.toLocaleDateString('en-US', {
+                      year: 'numeric',
+                      month: 'short',
+                      day: 'numeric',
+                    })}
+                  </time>
+                </div>
+              </article>
+            </Card>
+          ))}
+        </div>
+        <div class="section-cta">
+          <Button href="/blog" variant="ghost">
+            View All Posts →
+          </Button>
+        </div>
+      </div>
+    </section>
+
+    <!-- Theme Showcase -->
+    <section class="section theme-showcase">
+      <div class="container">
+        <h2 class="section-title">Time-Based Themes</h2>
+        <p class="section-description">
+          This blog adapts its colors based on your local time. Here's a preview of all four themes:
+        </p>
+        <div class="themes-grid">
+          {allThemes.map((theme) => (
+            <Card padding="md" class="theme-preview">
+              <div class="theme-preview-content">
+                <span class="theme-preview-icon">{theme.icon}</span>
+                <h3 class="theme-preview-name">{theme.label}</h3>
+                <p class="theme-preview-time">
+                  {theme.startHour}:00 - {theme.endHour}:00
+                </p>
+                <p class="theme-preview-description">{theme.description}</p>
+              </div>
+            </Card>
+          ))}
+        </div>
+      </div>
+    </section>
+
+    <!-- Discordian Quote -->
+    <section class="section quote-section">
+      <div class="container">
+        <Card padding="lg">
+          <blockquote class="discordian-quote">
+            <p class="quote-text">
+              "All statements are true in some sense, false in some sense, meaningless in some sense,
+              true and false in some sense, true and meaningless in some sense, false and meaningless
+              in some sense, and true and false and meaningless in some sense."
+            </p>
+            <footer class="quote-attribution">
+              — Principia Discordia
+            </footer>
+          </blockquote>
+        </Card>
+      </div>
+    </section>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .main-content {
+    min-height: 100vh;
+  }
+
+  .container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* Hero Section */
+  .hero {
+    padding: 4rem 0;
+    text-align: center;
+  }
+
+  .hero-content {
+    max-width: 800px;
+    margin: 0 auto;
+  }
+
+  .hero-title {
+    font-size: clamp(2.5rem, 5vw, 4rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    line-height: 1.2;
+  }
+
+  .wave {
+    display: inline-block;
+    animation: wave 2s ease-in-out infinite;
+  }
+
+  @keyframes wave {
+    0%, 100% { transform: rotate(0deg); }
+    25% { transform: rotate(20deg); }
+    75% { transform: rotate(-20deg); }
+  }
+
+  .hero-subtitle {
+    font-size: clamp(1.25rem, 2.5vw, 1.5rem);
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+  }
+
+  .hero-description {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .hero-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Theme Indicator */
+  .theme-indicator {
+    padding: 2rem 0;
+  }
+
+  .theme-info {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .theme-icon {
+    font-size: 3rem;
+  }
+
+  .theme-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 0 0 0.25rem 0;
+  }
+
+  .theme-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* Sections */
+  .section {
+    padding: 3rem 0;
+  }
+
+  .section-title {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 2rem;
+    text-align: center;
+  }
+
+  .section-description {
+    text-align: center;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .section-cta {
+    margin-top: 2rem;
+    text-align: center;
+  }
+
+  /* Posts Grid */
+  .posts-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 2rem;
+  }
+
+  .post-card {
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+  }
+
+  .post-title {
+    font-size: 1.5rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+  }
+
+  .post-title a {
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+
+  .post-title a:hover {
+    color: var(--accent-primary);
+  }
+
+  .post-description {
+    flex-grow: 1;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .post-meta {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .post-category {
+    text-transform: capitalize;
+    font-weight: 500;
+  }
+
+  /* Posts List */
+  .posts-list {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .post-item-title {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+  }
+
+  .post-item-title a {
+    text-decoration: none;
+    color: var(--text-primary);
+  }
+
+  .post-item-title a:hover {
+    color: var(--accent-primary);
+  }
+
+  .post-item-description {
+    color: var(--text-secondary);
+    margin-bottom: 0.75rem;
+  }
+
+  .post-item-meta {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  .separator {
+    color: var(--border-color);
+  }
+
+  /* Theme Showcase */
+  .theme-showcase {
+    background: var(--bg-secondary);
+    padding: 4rem 0;
+  }
+
+  .themes-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+  }
+
+  .theme-preview-content {
+    text-align: center;
+  }
+
+  .theme-preview-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .theme-preview-name {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.25rem;
+  }
+
+  .theme-preview-time {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin-bottom: 0.5rem;
+  }
+
+  .theme-preview-description {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+  }
+
+  /* Quote Section */
+  .quote-section {
+    padding: 4rem 0;
+  }
+
+  .discordian-quote {
+    text-align: center;
+    margin: 0;
+  }
+
+  .quote-text {
+    font-size: 1.25rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+    line-height: 1.8;
+  }
+
+  .quote-attribution {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--accent-primary);
+  }
+
+  @media (max-width: 768px) {
+    .hero {
+      padding: 3rem 0;
+    }
+
+    .posts-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .themes-grid {
+      grid-template-columns: 1fr;
+    }
+  }
+</style>
