@@ -1,0 +1,87 @@
+---
+/**
+ * Tag Component
+ * Pill-shaped tag for categories and labels
+ */
+
+interface Props {
+  href?: string;
+  variant?: 'default' | 'accent';
+  size?: 'sm' | 'md';
+  class?: string;
+}
+
+const {
+  href,
+  variant = 'default',
+  size = 'md',
+  class: className = '',
+} = Astro.props;
+
+const Element = href ? 'a' : 'span';
+const elementProps = href ? { href } : {};
+---
+
+<Element
+  {...elementProps}
+  class:list={[
+    'tag',
+    `tag-${variant}`,
+    `tag-${size}`,
+    className,
+  ]}
+>
+  <slot />
+</Element>
+
+<style>
+  .tag {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.25rem;
+    border-radius: 9999px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 200ms ease;
+  }
+
+  /* Variants */
+  .tag-default {
+    background: var(--bg-secondary);
+    color: var(--text-secondary);
+    border: 1px solid var(--border-color);
+  }
+
+  .tag-default:hover {
+    background: var(--accent-primary);
+    color: white;
+    border-color: var(--accent-primary);
+  }
+
+  .tag-accent {
+    background: var(--accent-primary);
+    color: white;
+    border: 1px solid var(--accent-primary);
+  }
+
+  .tag-accent:hover {
+    background: var(--accent-secondary);
+    border-color: var(--accent-secondary);
+  }
+
+  /* Sizes */
+  .tag-sm {
+    padding: 0.25rem 0.625rem;
+    font-size: 0.75rem;
+  }
+
+  .tag-md {
+    padding: 0.375rem 0.875rem;
+    font-size: 0.875rem;
+  }
+
+  a.tag:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+</style>
