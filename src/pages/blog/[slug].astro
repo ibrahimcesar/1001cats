@@ -9,8 +9,13 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/common/Header.astro';
 import Footer from '../../components/common/Footer.astro';
 import Tag from '../../components/ui/Tag.astro';
+import ShareButtons from '../../components/interactive/ShareButtons.astro';
+import ReadingProgress from '../../components/interactive/ReadingProgress.astro';
+import TableOfContents from '../../components/blog/TableOfContents.astro';
+import Comments from '../../components/interactive/Comments.astro';
 import { formatDate, formatRelativeDate } from '../../utils/formatDate';
 import { getReadingTime } from '../../utils/reading-time';
+import { generateToc, shouldShowToc } from '../../utils/toc';
 
 export async function getStaticPaths() {
   const posts = await getCollection('blog', ({ data }) => {
@@ -33,6 +38,13 @@ const { Content } = await post.render();
 const readingTime = getReadingTime(post.body);
 const formattedDate = formatDate(post.data.pubDate);
 const relativeDate = formatRelativeDate(post.data.pubDate);
+
+// Get full URL for sharing
+const postUrl = new URL(`/blog/${post.slug}`, Astro.site).toString();
+
+// Generate table of contents
+const tocHeadings = generateToc(post.body);
+const showToc = shouldShowToc(tocHeadings);
 
 // Get related posts (same category or shared tags)
 const allPosts = await getCollection('blog', ({ data }) => {
@@ -74,6 +86,9 @@ const relatedPosts = allPosts
 >
   <Header />
 
+  <!-- Reading Progress Bar -->
+  <ReadingProgress />
+
   <main id="main-content" class="main-content">
     <article class="blog-post">
       <div class="container">
@@ -112,9 +127,19 @@ const relatedPosts = allPosts
           )}
         </header>
 
-        <!-- Post Content -->
-        <div class="prose">
-          <Content />
+        <!-- Content with TOC -->
+        <div class="post-content-wrapper">
+          <!-- Table of Contents (Desktop) -->
+          {showToc && (
+            <div class="toc-wrapper">
+              <TableOfContents headings={tocHeadings} />
+            </div>
+          )}
+
+          <!-- Post Content -->
+          <div class="prose">
+            <Content />
+          </div>
         </div>
 
         <!-- Post Footer -->
@@ -134,7 +159,19 @@ const relatedPosts = allPosts
               )}
             </div>
           )}
+
+          <!-- Share Buttons -->
+          <div class="share-section">
+            <ShareButtons
+              title={post.data.title}
+              url={postUrl}
+              description={post.data.description}
+            />
+          </div>
         </footer>
+
+        <!-- Comments -->
+        <Comments title={post.data.title} />
       </div>
     </article>
 
@@ -246,6 +283,39 @@ const relatedPosts = allPosts
     font-size: 0.875rem;
     color: var(--text-secondary);
     font-style: italic;
+  }
+
+  /* Content with TOC Layout */
+  .post-content-wrapper {
+    display: grid;
+    grid-template-columns: 250px 1fr;
+    gap: 3rem;
+    align-items: start;
+  }
+
+  .toc-wrapper {
+    order: -1;
+  }
+
+  @media (max-width: 1024px) {
+    .post-content-wrapper {
+      grid-template-columns: 1fr;
+      gap: 2rem;
+    }
+
+    .toc-wrapper {
+      order: 0;
+    }
+  }
+
+  @media (max-width: 768px) {
+    .post-content-wrapper {
+      display: block;
+    }
+
+    .toc-wrapper {
+      display: none;
+    }
   }
 
   /* Prose Styling */
@@ -387,6 +457,10 @@ const relatedPosts = allPosts
   .series-order {
     font-size: 0.875rem;
     color: var(--accent-primary);
+  }
+
+  .share-section {
+    margin-top: 2rem;
   }
 
   /* Related Posts */
