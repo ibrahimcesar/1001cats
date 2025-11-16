@@ -9,6 +9,7 @@ import BaseLayout from '../../layouts/BaseLayout.astro';
 import Header from '../../components/common/Header.astro';
 import Footer from '../../components/common/Footer.astro';
 import Tag from '../../components/ui/Tag.astro';
+import ShareButtons from '../../components/interactive/ShareButtons.astro';
 import { formatDate, formatRelativeDate } from '../../utils/formatDate';
 import { getReadingTime } from '../../utils/reading-time';
 
@@ -33,6 +34,9 @@ const { Content } = await post.render();
 const readingTime = getReadingTime(post.body);
 const formattedDate = formatDate(post.data.pubDate);
 const relativeDate = formatRelativeDate(post.data.pubDate);
+
+// Get full URL for sharing
+const postUrl = new URL(`/blog/${post.slug}`, Astro.site).toString();
 
 // Get related posts (same category or shared tags)
 const allPosts = await getCollection('blog', ({ data }) => {
@@ -134,6 +138,15 @@ const relatedPosts = allPosts
               )}
             </div>
           )}
+
+          <!-- Share Buttons -->
+          <div class="share-section">
+            <ShareButtons
+              title={post.data.title}
+              url={postUrl}
+              description={post.data.description}
+            />
+          </div>
         </footer>
       </div>
     </article>
@@ -387,6 +400,10 @@ const relatedPosts = allPosts
   .series-order {
     font-size: 0.875rem;
     color: var(--accent-primary);
+  }
+
+  .share-section {
+    margin-top: 2rem;
   }
 
   /* Related Posts */
