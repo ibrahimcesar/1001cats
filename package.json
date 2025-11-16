@@ -1,0 +1,22 @@
+{
+  "name": "1001cats",
+  "type": "module",
+  "version": "0.0.1",
+  "description": "A Discordian blog on science, philosophy, life, the universe, and everything",
+  "scripts": {
+    "dev": "astro dev",
+    "start": "astro dev",
+    "build": "astro check && astro build",
+    "preview": "astro preview",
+    "astro": "astro"
+  },
+  "dependencies": {
+    "astro": "^4.16.1",
+    "@astrojs/tailwind": "^5.1.2",
+    "tailwindcss": "^3.4.16"
+  },
+  "devDependencies": {
+    "@astrojs/check": "^0.9.4",
+    "typescript": "^5.6.3"
+  }
+}
