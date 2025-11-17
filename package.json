@@ -8,7 +8,8 @@
     "start": "astro dev",
     "build": "astro check && astro build",
     "preview": "astro preview",
-    "astro": "astro"
+    "astro": "astro",
+    "amplify:deploy": "astro build"
   },
   "dependencies": {
     "astro": "^4.16.1",
