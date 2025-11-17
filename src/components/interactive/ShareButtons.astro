@@ -1,0 +1,285 @@
+---
+/**
+ * ShareButtons Component
+ * Social sharing buttons for blog posts
+ */
+
+interface Props {
+  title: string;
+  url: string;
+  description?: string;
+}
+
+const { title, url, description = '' } = Astro.props;
+
+// Encode URL and text for sharing
+const encodedUrl = encodeURIComponent(url);
+const encodedTitle = encodeURIComponent(title);
+const encodedText = encodeURIComponent(`${title} - ${description}`);
+
+// Share URLs
+const twitterUrl = `https://twitter.com/intent/tweet?text=${encodedTitle}&url=${encodedUrl}`;
+const mastodonUrl = `https://mastodon.social/share?text=${encodedTitle}%20${encodedUrl}`;
+const linkedInUrl = `https://www.linkedin.com/sharing/share-offsite/?url=${encodedUrl}`;
+const emailUrl = `mailto:?subject=${encodedTitle}&body=${encodedText}%0A%0A${encodedUrl}`;
+
+// Check if Web Share API is available (client-side)
+const hasWebShare = typeof navigator !== 'undefined' && 'share' in navigator;
+---
+
+<div class="share-buttons">
+  <h3 class="share-title">Share this post</h3>
+
+  <div class="share-actions">
+    <!-- Native Share (mobile/modern browsers) -->
+    <button
+      id="native-share"
+      class="share-button share-native"
+      aria-label="Share via system dialog"
+      title="Share"
+      data-title={title}
+      data-url={url}
+      data-text={description}
+    >
+      <svg class="share-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <circle cx="18" cy="5" r="3"></circle>
+        <circle cx="6" cy="12" r="3"></circle>
+        <circle cx="18" cy="19" r="3"></circle>
+        <line x1="8.59" y1="13.51" x2="15.42" y2="17.49"></line>
+        <line x1="15.41" y1="6.51" x2="8.59" y2="10.49"></line>
+      </svg>
+      <span class="share-label">Share</span>
+    </button>
+
+    <!-- Twitter/X -->
+    <a
+      href={twitterUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="share-button share-twitter"
+      aria-label="Share on Twitter"
+      title="Share on Twitter/X"
+    >
+      <svg class="share-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
+      </svg>
+      <span class="share-label">Twitter</span>
+    </a>
+
+    <!-- Mastodon -->
+    <a
+      href={mastodonUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="share-button share-mastodon"
+      aria-label="Share on Mastodon"
+      title="Share on Mastodon"
+    >
+      <svg class="share-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M23.193 7.879c0-5.206-3.411-6.732-3.411-6.732C18.062.357 15.108.025 12.041 0h-.076c-3.068.025-6.02.357-7.74 1.147 0 0-3.411 1.526-3.411 6.732 0 1.192-.023 2.618.015 4.129.124 5.092.934 10.109 5.641 11.355 2.17.574 4.034.695 5.535.612 2.722-.15 4.25-.972 4.25-.972l-.09-1.975s-1.945.613-4.129.539c-2.165-.074-4.449-.233-4.799-2.891a5.499 5.499 0 0 1-.048-.745s2.125.52 4.817.643c1.646.075 3.19-.097 4.758-.283 3.007-.359 5.625-2.212 5.954-3.905.517-2.665.475-6.507.475-6.507zm-4.024 6.709h-2.497V8.469c0-1.29-.543-1.944-1.628-1.944-1.2 0-1.801.776-1.801 2.312v3.349h-2.483v-3.35c0-1.536-.601-2.312-1.802-2.312-1.085 0-1.628.655-1.628 1.944v6.119H4.832V8.284c0-1.289.328-2.313.987-3.07.68-.758 1.569-1.146 2.674-1.146 1.278 0 2.246.491 2.886 1.474L12 6.585l.622-1.043c.64-.983 1.608-1.474 2.886-1.474 1.104 0 1.994.388 2.674 1.146.658.757.986 1.781.986 3.07v6.304z"/>
+      </svg>
+      <span class="share-label">Mastodon</span>
+    </a>
+
+    <!-- LinkedIn -->
+    <a
+      href={linkedInUrl}
+      target="_blank"
+      rel="noopener noreferrer"
+      class="share-button share-linkedin"
+      aria-label="Share on LinkedIn"
+      title="Share on LinkedIn"
+    >
+      <svg class="share-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+        <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
+      </svg>
+      <span class="share-label">LinkedIn</span>
+    </a>
+
+    <!-- Email -->
+    <a
+      href={emailUrl}
+      class="share-button share-email"
+      aria-label="Share via email"
+      title="Share via email"
+    >
+      <svg class="share-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
+        <polyline points="22,6 12,13 2,6"></polyline>
+      </svg>
+      <span class="share-label">Email</span>
+    </a>
+
+    <!-- Copy Link -->
+    <button
+      id="copy-link"
+      class="share-button share-copy"
+      aria-label="Copy link to clipboard"
+      title="Copy link"
+      data-url={url}
+    >
+      <svg class="share-icon" xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+        <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
+        <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
+      </svg>
+      <span class="share-label" id="copy-label">Copy link</span>
+    </button>
+  </div>
+</div>
+
+<script>
+  // Native share functionality
+  const nativeShareBtn = document.getElementById('native-share');
+
+  if (nativeShareBtn) {
+    // Hide native share button if not supported
+    if (!navigator.share) {
+      nativeShareBtn.style.display = 'none';
+    } else {
+      nativeShareBtn.addEventListener('click', async () => {
+        const title = nativeShareBtn.getAttribute('data-title') || '';
+        const url = nativeShareBtn.getAttribute('data-url') || '';
+        const text = nativeShareBtn.getAttribute('data-text') || '';
+
+        try {
+          await navigator.share({
+            title,
+            text,
+            url,
+          });
+        } catch (err) {
+          // User cancelled or share failed
+          if (err instanceof Error && err.name !== 'AbortError') {
+            console.error('Share failed:', err);
+          }
+        }
+      });
+    }
+  }
+
+  // Copy link functionality
+  const copyLinkBtn = document.getElementById('copy-link');
+  const copyLabel = document.getElementById('copy-label');
+
+  if (copyLinkBtn && copyLabel) {
+    copyLinkBtn.addEventListener('click', async () => {
+      const url = copyLinkBtn.getAttribute('data-url') || '';
+
+      try {
+        await navigator.clipboard.writeText(url);
+        copyLabel.textContent = 'Copied!';
+
+        setTimeout(() => {
+          copyLabel.textContent = 'Copy link';
+        }, 2000);
+      } catch (err) {
+        console.error('Copy failed:', err);
+        copyLabel.textContent = 'Failed';
+
+        setTimeout(() => {
+          copyLabel.textContent = 'Copy link';
+        }, 2000);
+      }
+    });
+  }
+</script>
+
+<style>
+  .share-buttons {
+    padding: 2rem;
+    background: var(--bg-secondary);
+    border-radius: 0.75rem;
+    border: 1px solid var(--border-color);
+  }
+
+  .share-title {
+    font-size: 1.125rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .share-actions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.75rem;
+  }
+
+  .share-button {
+    display: inline-flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.625rem 1rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.5rem;
+    font-size: 0.875rem;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--text-primary);
+    cursor: pointer;
+    transition: all 200ms ease;
+  }
+
+  .share-button:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+  }
+
+  .share-button:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+
+  .share-icon {
+    flex-shrink: 0;
+  }
+
+  /* Platform-specific colors on hover */
+  .share-twitter:hover {
+    background: #1da1f2;
+    border-color: #1da1f2;
+    color: white;
+  }
+
+  .share-mastodon:hover {
+    background: #6364ff;
+    border-color: #6364ff;
+    color: white;
+  }
+
+  .share-linkedin:hover {
+    background: #0077b5;
+    border-color: #0077b5;
+    color: white;
+  }
+
+  .share-email:hover {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+  }
+
+  .share-copy:hover {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+  }
+
+  .share-native:hover {
+    background: var(--accent-primary);
+    border-color: var(--accent-primary);
+    color: white;
+  }
+
+  @media (max-width: 640px) {
+    .share-actions {
+      flex-direction: column;
+    }
+
+    .share-button {
+      width: 100%;
+      justify-content: center;
+    }
+  }
+</style>

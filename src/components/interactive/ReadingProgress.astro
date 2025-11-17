@@ -1,0 +1,107 @@
+---
+/**
+ * ReadingProgress Component
+ * Visual progress indicator showing how far through the article the user has scrolled
+ */
+---
+
+<div id="reading-progress" class="reading-progress" role="progressbar" aria-label="Reading progress" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100">
+  <div class="reading-progress-bar"></div>
+</div>
+
+<script>
+  function initReadingProgress() {
+    const progressBar = document.querySelector('.reading-progress-bar') as HTMLElement;
+    const progressContainer = document.getElementById('reading-progress') as HTMLElement;
+
+    if (!progressBar || !progressContainer) return;
+
+    function updateProgress() {
+      // Get the document height and viewport height
+      const windowHeight = window.innerHeight;
+      const documentHeight = document.documentElement.scrollHeight;
+      const scrollTop = window.scrollY || document.documentElement.scrollTop;
+
+      // Calculate progress percentage
+      const scrollableHeight = documentHeight - windowHeight;
+      const progress = (scrollTop / scrollableHeight) * 100;
+
+      // Clamp between 0 and 100
+      const clampedProgress = Math.min(100, Math.max(0, progress));
+
+      // Update the progress bar width
+      progressBar.style.width = `${clampedProgress}%`;
+
+      // Update ARIA attribute
+      progressContainer.setAttribute('aria-valuenow', clampedProgress.toFixed(0));
+
+      // Hide progress bar at the very top of the page
+      if (scrollTop < 50) {
+        progressContainer.style.opacity = '0';
+      } else {
+        progressContainer.style.opacity = '1';
+      }
+    }
+
+    // Update on scroll with throttling for performance
+    let ticking = false;
+    window.addEventListener('scroll', () => {
+      if (!ticking) {
+        window.requestAnimationFrame(() => {
+          updateProgress();
+          ticking = false;
+        });
+        ticking = true;
+      }
+    });
+
+    // Update on resize
+    window.addEventListener('resize', updateProgress);
+
+    // Initial update
+    updateProgress();
+  }
+
+  // Initialize on page load
+  initReadingProgress();
+
+  // Re-initialize on Astro page navigation (View Transitions)
+  document.addEventListener('astro:page-load', initReadingProgress);
+</script>
+
+<style>
+  .reading-progress {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 4px;
+    z-index: 100;
+    background: transparent;
+    opacity: 0;
+    transition: opacity 300ms ease;
+  }
+
+  .reading-progress-bar {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(
+      90deg,
+      var(--accent-primary),
+      var(--accent-secondary)
+    );
+    transition: width 150ms ease-out;
+    box-shadow: 0 0 10px var(--accent-primary);
+  }
+
+  /* Respect reduced motion preferences */
+  @media (prefers-reduced-motion: reduce) {
+    .reading-progress {
+      transition: none;
+    }
+
+    .reading-progress-bar {
+      transition: none;
+    }
+  }
+</style>

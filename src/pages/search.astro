@@ -1,0 +1,96 @@
+---
+import BaseLayout from '../layouts/BaseLayout.astro';
+import SearchComponent from '../components/interactive/Search.astro';
+
+const title = 'Search';
+const description = 'Search across all blog posts on 1001 Schrödinger\'s Cats';
+---
+
+<BaseLayout title={title} description={description}>
+  <main class="container mx-auto px-4 py-12 max-w-5xl">
+    <!-- Header -->
+    <header class="text-center mb-12">
+      <h1 class="text-4xl md:text-5xl font-bold mb-4">
+        🔍 Search the Blog
+      </h1>
+      <p class="text-lg text-text-secondary max-w-2xl mx-auto">
+        Find insights on science, philosophy, life, the universe, and everything.
+        Press <kbd class="px-2 py-1 text-sm bg-bg-secondary border border-border-color rounded">/</kbd> to focus the search box.
+      </p>
+    </header>
+
+    <!-- Search Component -->
+    <SearchComponent />
+
+    <!-- Search Tips -->
+    <aside class="mt-16 p-6 bg-bg-secondary border-2 border-border-color rounded-xl">
+      <h2 class="text-xl font-semibold mb-4 flex items-center gap-2">
+        <span>💡</span> Search Tips
+      </h2>
+      <ul class="space-y-2 text-text-secondary">
+        <li class="flex items-start gap-2">
+          <span class="text-accent-primary">•</span>
+          <span>Search by post title, content, or keywords</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-accent-primary">•</span>
+          <span>Results appear instantly as you type</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-accent-primary">•</span>
+          <span>Press <kbd class="px-1.5 py-0.5 text-xs bg-bg-primary border border-border-color rounded">/</kbd> from anywhere to focus the search</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-accent-primary">•</span>
+          <span>Press <kbd class="px-1.5 py-0.5 text-xs bg-bg-primary border border-border-color rounded">Esc</kbd> to clear and close results</span>
+        </li>
+        <li class="flex items-start gap-2">
+          <span class="text-accent-primary">•</span>
+          <span>Try searching for topics like "quantum", "consciousness", or "fnord"</span>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Browse Alternative -->
+    <div class="mt-12 text-center">
+      <p class="text-text-secondary mb-4">
+        Can't find what you're looking for?
+      </p>
+      <div class="flex flex-wrap justify-center gap-4">
+        <a
+          href="/blog"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-accent-primary text-white rounded-lg font-semibold hover:scale-105 transition-transform"
+        >
+          📚 Browse All Posts
+        </a>
+        <a
+          href="/blog#tags"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-bg-secondary border-2 border-border-color rounded-lg font-semibold hover:border-accent-primary transition-colors"
+        >
+          🏷️ Browse by Tag
+        </a>
+        <a
+          href="/blog#categories"
+          class="inline-flex items-center gap-2 px-6 py-3 bg-bg-secondary border-2 border-border-color rounded-lg font-semibold hover:border-accent-primary transition-colors"
+        >
+          📂 Browse by Category
+        </a>
+      </div>
+    </div>
+
+    <!-- Discordian Touch -->
+    <div class="mt-16 text-center text-sm text-text-secondary italic">
+      <p>
+        "The search for truth is more important than its possession."
+        <br>
+        <span class="text-xs">- A Discordian Proverb (probably)</span>
+      </p>
+    </div>
+  </main>
+</BaseLayout>
+
+<style>
+  kbd {
+    font-family: ui-monospace, monospace;
+  }
+</style>

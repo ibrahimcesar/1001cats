@@ -1,0 +1,279 @@
+---
+// Search component using Pagefind
+// Provides instant client-side search across all blog posts
+---
+
+<div class="search-container">
+  <div class="search-input-wrapper">
+    <svg
+      class="search-icon"
+      xmlns="http://www.w3.org/2000/svg"
+      width="20"
+      height="20"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      stroke-width="2"
+      stroke-linecap="round"
+      stroke-linejoin="round"
+      aria-hidden="true"
+    >
+      <circle cx="11" cy="11" r="8"></circle>
+      <path d="m21 21-4.35-4.35"></path>
+    </svg>
+    <input
+      type="search"
+      id="search-input"
+      class="search-input"
+      placeholder="Search posts... (Press / to focus)"
+      aria-label="Search blog posts"
+      autocomplete="off"
+    />
+    <kbd class="search-kbd">/</kbd>
+  </div>
+
+  <div id="search-results" class="search-results" role="region" aria-live="polite">
+    <!-- Results will be inserted here by Pagefind -->
+  </div>
+
+  <div id="search-empty" class="search-empty hidden">
+    <p>No results found for "<span id="search-query"></span>"</p>
+    <p class="text-sm text-text-secondary mt-2">Try different keywords or check your spelling.</p>
+  </div>
+</div>
+
+<style>
+  .search-container {
+    width: 100%;
+    max-width: 48rem;
+    margin: 0 auto;
+  }
+
+  .search-input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .search-icon {
+    position: absolute;
+    left: 1rem;
+    color: var(--text-secondary);
+    pointer-events: none;
+  }
+
+  .search-input {
+    width: 100%;
+    padding: 0.875rem 3.5rem 0.875rem 3rem;
+    font-size: 1rem;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 0.75rem;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+  }
+
+  .search-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(var(--accent-primary-rgb), 0.1);
+  }
+
+  .search-input::placeholder {
+    color: var(--text-secondary);
+  }
+
+  .search-kbd {
+    position: absolute;
+    right: 1rem;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.75rem;
+    font-family: ui-monospace, monospace;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 0.25rem;
+    color: var(--text-secondary);
+    pointer-events: none;
+  }
+
+  .search-results {
+    margin-top: 2rem;
+  }
+
+  .search-empty {
+    margin-top: 3rem;
+    padding: 2rem;
+    text-align: center;
+    color: var(--text-secondary);
+    background: var(--bg-secondary);
+    border-radius: 0.75rem;
+  }
+
+  .search-empty.hidden {
+    display: none;
+  }
+
+  /* Pagefind result styling */
+  :global(.pagefind-ui) {
+    --pagefind-ui-scale: 1;
+    --pagefind-ui-primary: var(--accent-primary);
+    --pagefind-ui-text: var(--text-primary);
+    --pagefind-ui-background: var(--bg-primary);
+    --pagefind-ui-border: var(--border-color);
+    --pagefind-ui-tag: var(--bg-secondary);
+    --pagefind-ui-border-width: 2px;
+    --pagefind-ui-border-radius: 0.75rem;
+    --pagefind-ui-font: inherit;
+  }
+
+  :global(.pagefind-ui__result) {
+    padding: 1.5rem;
+    margin-bottom: 1rem;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 0.75rem;
+    transition: all 0.2s ease;
+  }
+
+  :global(.pagefind-ui__result:hover) {
+    border-color: var(--accent-primary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+  }
+
+  :global(.pagefind-ui__result-title) {
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin-bottom: 0.5rem;
+  }
+
+  :global(.pagefind-ui__result-excerpt) {
+    color: var(--text-secondary);
+    line-height: 1.6;
+  }
+
+  :global(.pagefind-ui__result-link) {
+    text-decoration: none;
+    color: inherit;
+  }
+
+  :global(.pagefind-ui__message) {
+    padding: 1rem;
+    text-align: center;
+    color: var(--text-secondary);
+  }
+</style>
+
+<script is:inline>
+  // Load Pagefind and initialize search
+  let pagefind = null;
+
+  async function initializePagefind() {
+    try {
+      // Pagefind is generated after build, so import dynamically
+      pagefind = await import('/pagefind/pagefind.js');
+      await pagefind.init();
+    } catch (error) {
+      console.error('Failed to load Pagefind:', error);
+    }
+  }
+
+  // Initialize on page load
+  initializePagefind();
+
+  const searchInput = document.getElementById('search-input');
+  const searchResults = document.getElementById('search-results');
+  const searchEmpty = document.getElementById('search-empty');
+  const searchQuery = document.getElementById('search-query');
+
+  let debounceTimer;
+
+  async function performSearch(query) {
+    if (!pagefind || !query.trim()) {
+      if (searchResults) searchResults.innerHTML = '';
+      if (searchEmpty) searchEmpty.classList.add('hidden');
+      return;
+    }
+
+    try {
+      const results = await pagefind.search(query);
+
+      if (searchResults) {
+        searchResults.innerHTML = '';
+      }
+
+      if (results.results.length === 0) {
+        if (searchEmpty) {
+          searchEmpty.classList.remove('hidden');
+          if (searchQuery) searchQuery.textContent = query;
+        }
+        return;
+      }
+
+      if (searchEmpty) {
+        searchEmpty.classList.add('hidden');
+      }
+
+      // Display results (max 10)
+      const resultsToShow = results.results.slice(0, 10);
+
+      for (const result of resultsToShow) {
+        const data = await result.data();
+
+        const resultElement = document.createElement('a');
+        resultElement.href = data.url;
+        resultElement.className = 'pagefind-ui__result';
+
+        resultElement.innerHTML = `
+          <h3 class="pagefind-ui__result-title">${data.meta?.title || 'Untitled'}</h3>
+          <p class="pagefind-ui__result-excerpt">${data.excerpt || ''}</p>
+        `;
+
+        if (searchResults) {
+          searchResults.appendChild(resultElement);
+        }
+      }
+
+      // Show total results count
+      if (results.results.length > 10) {
+        const moreMessage = document.createElement('p');
+        moreMessage.className = 'pagefind-ui__message';
+        moreMessage.textContent = `Showing 10 of ${results.results.length} results`;
+        if (searchResults) {
+          searchResults.appendChild(moreMessage);
+        }
+      }
+    } catch (error) {
+      console.error('Search error:', error);
+    }
+  }
+
+  // Search on input with debounce
+  if (searchInput) {
+    searchInput.addEventListener('input', (e) => {
+      const query = e.target.value;
+
+      clearTimeout(debounceTimer);
+      debounceTimer = window.setTimeout(() => {
+        performSearch(query);
+      }, 300);
+    });
+  }
+
+  // Keyboard shortcut: Press / to focus search
+  document.addEventListener('keydown', (e) => {
+    if (e.key === '/' && document.activeElement !== searchInput) {
+      e.preventDefault();
+      searchInput?.focus();
+    }
+
+    // Press Escape to blur search
+    if (e.key === 'Escape' && document.activeElement === searchInput) {
+      searchInput?.blur();
+      if (searchResults) searchResults.innerHTML = '';
+      if (searchEmpty) searchEmpty.classList.add('hidden');
+      searchInput.value = '';
+    }
+  });
+</script>

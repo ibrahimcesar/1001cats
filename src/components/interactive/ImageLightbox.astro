@@ -1,0 +1,412 @@
+---
+/**
+ * Image Lightbox Component
+ * Accessible, keyboard-navigable image viewer
+ * Expands images on click with smooth transitions
+ */
+---
+
+<!-- Lightbox Overlay -->
+<div
+  id="lightbox-overlay"
+  class="lightbox-overlay"
+  role="dialog"
+  aria-modal="true"
+  aria-label="Image viewer"
+  aria-hidden="true"
+>
+  <div class="lightbox-container">
+    <!-- Close Button -->
+    <button
+      id="lightbox-close"
+      class="lightbox-close"
+      aria-label="Close image viewer"
+      type="button"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="24"
+        height="24"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <line x1="18" y1="6" x2="6" y2="18"></line>
+        <line x1="6" y1="6" x2="18" y2="18"></line>
+      </svg>
+    </button>
+
+    <!-- Image Container -->
+    <div class="lightbox-image-wrapper">
+      <img
+        id="lightbox-image"
+        src=""
+        alt=""
+        class="lightbox-image"
+      />
+    </div>
+
+    <!-- Caption -->
+    <div id="lightbox-caption" class="lightbox-caption"></div>
+
+    <!-- Navigation (for galleries - future enhancement) -->
+    <button
+      id="lightbox-prev"
+      class="lightbox-nav lightbox-prev"
+      aria-label="Previous image"
+      type="button"
+      style="display: none;"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="32"
+        height="32"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
+
+    <button
+      id="lightbox-next"
+      class="lightbox-nav lightbox-next"
+      aria-label="Next image"
+      type="button"
+      style="display: none;"
+    >
+      <svg
+        xmlns="http://www.w3.org/2000/svg"
+        width="32"
+        height="32"
+        viewBox="0 0 24 24"
+        fill="none"
+        stroke="currentColor"
+        stroke-width="2"
+        stroke-linecap="round"
+        stroke-linejoin="round"
+        aria-hidden="true"
+      >
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+  </div>
+</div>
+
+<style>
+  .lightbox-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 9999;
+    background: rgba(0, 0, 0, 0.95);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .lightbox-overlay.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .lightbox-container {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 2rem;
+  }
+
+  .lightbox-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    z-index: 10001;
+    width: 3rem;
+    height: 3rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .lightbox-close:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: scale(1.1);
+  }
+
+  .lightbox-close:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+
+  .lightbox-image-wrapper {
+    max-width: 90vw;
+    max-height: 80vh;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .lightbox-image {
+    max-width: 100%;
+    max-height: 80vh;
+    object-fit: contain;
+    border-radius: 0.5rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    transform: scale(0.9);
+    opacity: 0;
+    transition: transform 0.3s ease, opacity 0.3s ease;
+  }
+
+  .lightbox-overlay.active .lightbox-image {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  .lightbox-caption {
+    margin-top: 1.5rem;
+    padding: 1rem 2rem;
+    max-width: 800px;
+    text-align: center;
+    color: white;
+    background: rgba(0, 0, 0, 0.5);
+    border-radius: 0.5rem;
+    backdrop-filter: blur(10px);
+    font-size: 0.95rem;
+    line-height: 1.5;
+  }
+
+  .lightbox-caption:empty {
+    display: none;
+  }
+
+  .lightbox-nav {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    width: 3.5rem;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgba(255, 255, 255, 0.1);
+    border: 2px solid rgba(255, 255, 255, 0.3);
+    border-radius: 50%;
+    color: white;
+    cursor: pointer;
+    transition: all 0.2s ease;
+    backdrop-filter: blur(10px);
+  }
+
+  .lightbox-nav:hover {
+    background: rgba(255, 255, 255, 0.2);
+    border-color: rgba(255, 255, 255, 0.5);
+    transform: translateY(-50%) scale(1.1);
+  }
+
+  .lightbox-nav:focus {
+    outline: 2px solid white;
+    outline-offset: 2px;
+  }
+
+  .lightbox-prev {
+    left: 2rem;
+  }
+
+  .lightbox-next {
+    right: 2rem;
+  }
+
+  @media (max-width: 768px) {
+    .lightbox-container {
+      padding: 1rem;
+    }
+
+    .lightbox-close {
+      top: 0.5rem;
+      right: 0.5rem;
+      width: 2.5rem;
+      height: 2.5rem;
+    }
+
+    .lightbox-nav {
+      width: 3rem;
+      height: 3rem;
+    }
+
+    .lightbox-prev {
+      left: 0.5rem;
+    }
+
+    .lightbox-next {
+      right: 0.5rem;
+    }
+
+    .lightbox-caption {
+      margin-top: 1rem;
+      padding: 0.75rem 1rem;
+      font-size: 0.875rem;
+    }
+  }
+
+  /* Accessibility: Respect reduced motion preference */
+  @media (prefers-reduced-motion: reduce) {
+    .lightbox-overlay,
+    .lightbox-image,
+    .lightbox-close,
+    .lightbox-nav {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  class ImageLightbox {
+    private overlay: HTMLElement | null;
+    private image: HTMLImageElement | null;
+    private caption: HTMLElement | null;
+    private closeButton: HTMLElement | null;
+    private focusedElementBeforeOpen: HTMLElement | null = null;
+
+    constructor() {
+      this.overlay = document.getElementById('lightbox-overlay');
+      this.image = document.getElementById('lightbox-image') as HTMLImageElement;
+      this.caption = document.getElementById('lightbox-caption');
+      this.closeButton = document.getElementById('lightbox-close');
+
+      this.init();
+    }
+
+    init() {
+      // Find all clickable images in prose content
+      const proseImages = document.querySelectorAll('.prose img');
+
+      proseImages.forEach((img) => {
+        const imageElement = img as HTMLElement;
+
+        // Make image clickable
+        imageElement.style.cursor = 'zoom-in';
+        imageElement.setAttribute('role', 'button');
+        imageElement.setAttribute('tabindex', '0');
+        imageElement.setAttribute('aria-label', `Click to expand: ${(img as HTMLImageElement).alt || 'image'}`);
+
+        // Click handler
+        imageElement.addEventListener('click', (e) => {
+          e.preventDefault();
+          this.open(img as HTMLImageElement);
+        });
+
+        // Keyboard handler (Enter or Space)
+        imageElement.addEventListener('keydown', (e: KeyboardEvent) => {
+          if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            this.open(img as HTMLImageElement);
+          }
+        });
+      });
+
+      // Close button
+      this.closeButton?.addEventListener('click', () => this.close());
+
+      // Click overlay to close
+      this.overlay?.addEventListener('click', (e) => {
+        if (e.target === this.overlay) {
+          this.close();
+        }
+      });
+
+      // Keyboard navigation
+      document.addEventListener('keydown', (e) => {
+        if (!this.overlay?.classList.contains('active')) return;
+
+        if (e.key === 'Escape') {
+          this.close();
+        }
+      });
+    }
+
+    open(img: HTMLImageElement) {
+      if (!this.overlay || !this.image || !this.caption) return;
+
+      // Store currently focused element
+      this.focusedElementBeforeOpen = document.activeElement as HTMLElement;
+
+      // Set image and caption
+      this.image.src = img.src;
+      this.image.alt = img.alt || '';
+      this.caption.textContent = img.alt || '';
+
+      // Show lightbox
+      this.overlay.classList.add('active');
+      this.overlay.setAttribute('aria-hidden', 'false');
+
+      // Focus close button
+      this.closeButton?.focus();
+
+      // Prevent body scroll
+      document.body.style.overflow = 'hidden';
+    }
+
+    close() {
+      if (!this.overlay) return;
+
+      // Hide lightbox
+      this.overlay.classList.remove('active');
+      this.overlay.setAttribute('aria-hidden', 'true');
+
+      // Restore body scroll
+      document.body.style.overflow = '';
+
+      // Restore focus to element that opened lightbox
+      if (this.focusedElementBeforeOpen) {
+        this.focusedElementBeforeOpen.focus();
+      }
+
+      // Clear image after transition
+      setTimeout(() => {
+        if (this.image) {
+          this.image.src = '';
+          this.image.alt = '';
+        }
+        if (this.caption) {
+          this.caption.textContent = '';
+        }
+      }, 300);
+    }
+  }
+
+  // Initialize lightbox
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      new ImageLightbox();
+    });
+  } else {
+    new ImageLightbox();
+  }
+</script>

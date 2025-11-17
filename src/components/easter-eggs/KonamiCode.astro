@@ -1,0 +1,384 @@
+---
+/**
+ * Konami Code Easter Egg
+ * Triggers a special surprise when the user enters: ↑ ↑ ↓ ↓ ← → ← → B A
+ */
+---
+
+<!-- Easter Egg Modal -->
+<div id="konami-modal" class="konami-modal" role="dialog" aria-hidden="true" aria-labelledby="konami-title">
+  <div class="konami-backdrop"></div>
+  <div class="konami-content">
+    <button id="konami-close" class="konami-close" aria-label="Close easter egg">×</button>
+
+    <div class="konami-inner">
+      <h2 id="konami-title" class="konami-title">🍎 HAIL ERIS! 🍎</h2>
+
+      <div class="konami-message">
+        <p class="konami-text">
+          Congratulations! You have discovered the Sacred Chao!
+        </p>
+        <div class="sacred-chao">
+          <div class="chao-container">
+            <div class="yin-yang">☯️</div>
+            <div class="golden-apple">🍎</div>
+          </div>
+        </div>
+        <p class="konami-quote">
+          "It is my firm belief that it is a mistake to hold firm beliefs."
+          <br>
+          <cite>— Principia Discordia</cite>
+        </p>
+        <p class="konami-revelation">
+          You are hereby ordained as a Pope of Discordianism.
+          <br>
+          <strong>All Hail Discordia!</strong>
+        </p>
+        <div class="konami-actions">
+          <button id="generate-pope-card" class="konami-button">
+            Generate My Pope Card
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  .konami-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .konami-modal.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .konami-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.9);
+    backdrop-filter: blur(10px);
+  }
+
+  .konami-content {
+    position: relative;
+    max-width: 600px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: linear-gradient(135deg, var(--bg-primary), var(--bg-secondary));
+    border: 3px solid var(--accent-primary);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+    animation: konamiSlideIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  @keyframes konamiSlideIn {
+    from {
+      transform: scale(0.5) rotate(-10deg);
+      opacity: 0;
+    }
+    to {
+      transform: scale(1) rotate(0deg);
+      opacity: 1;
+    }
+  }
+
+  .konami-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-primary);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .konami-close:hover {
+    background: var(--accent-secondary);
+    transform: scale(1.1) rotate(90deg);
+  }
+
+  .konami-inner {
+    text-align: center;
+  }
+
+  .konami-title {
+    font-size: 2.5rem;
+    font-weight: 800;
+    margin-bottom: 1.5rem;
+    color: var(--accent-primary);
+    animation: konamiPulse 2s ease-in-out infinite;
+  }
+
+  @keyframes konamiPulse {
+    0%, 100% {
+      transform: scale(1);
+    }
+    50% {
+      transform: scale(1.05);
+    }
+  }
+
+  .konami-text {
+    font-size: 1.25rem;
+    margin-bottom: 2rem;
+    color: var(--text-primary);
+  }
+
+  .sacred-chao {
+    margin: 2rem 0;
+  }
+
+  .chao-container {
+    position: relative;
+    display: inline-block;
+    animation: konamiRotate 10s linear infinite;
+  }
+
+  @keyframes konamiRotate {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+
+  .yin-yang {
+    font-size: 8rem;
+    line-height: 1;
+  }
+
+  .golden-apple {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 4rem;
+    animation: konamiFloat 3s ease-in-out infinite;
+  }
+
+  @keyframes konamiFloat {
+    0%, 100% {
+      transform: translate(-50%, -50%) translateY(0);
+    }
+    50% {
+      transform: translate(-50%, -50%) translateY(-10px);
+    }
+  }
+
+  .konami-quote {
+    font-style: italic;
+    font-size: 1.125rem;
+    line-height: 1.6;
+    margin: 2rem 0;
+    color: var(--text-secondary);
+  }
+
+  .konami-quote cite {
+    display: block;
+    margin-top: 0.5rem;
+    font-style: normal;
+    font-size: 1rem;
+    color: var(--accent-primary);
+  }
+
+  .konami-revelation {
+    font-size: 1.125rem;
+    line-height: 1.8;
+    margin: 1.5rem 0;
+    color: var(--text-primary);
+  }
+
+  .konami-revelation strong {
+    color: var(--accent-primary);
+    font-size: 1.25rem;
+  }
+
+  .konami-actions {
+    margin-top: 2rem;
+  }
+
+  .konami-button {
+    padding: 1rem 2rem;
+    background: var(--accent-primary);
+    color: white;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .konami-button:hover {
+    background: var(--accent-secondary);
+    transform: scale(1.05);
+  }
+
+  /* Accessibility: Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .konami-content,
+    .konami-title,
+    .chao-container,
+    .golden-apple {
+      animation: none;
+    }
+
+    .konami-close:hover {
+      transform: none;
+    }
+
+    .konami-button:hover {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  class KonamiCode {
+    private sequence: string[] = [];
+    private konamiCode: string[] = [
+      'ArrowUp',
+      'ArrowUp',
+      'ArrowDown',
+      'ArrowDown',
+      'ArrowLeft',
+      'ArrowRight',
+      'ArrowLeft',
+      'ArrowRight',
+      'b',
+      'a'
+    ];
+    private modal: HTMLElement | null;
+    private closeButton: HTMLElement | null;
+    private generateButton: HTMLElement | null;
+    private activated: boolean = false;
+
+    constructor() {
+      this.modal = document.getElementById('konami-modal');
+      this.closeButton = document.getElementById('konami-close');
+      this.generateButton = document.getElementById('generate-pope-card');
+
+      this.init();
+    }
+
+    init() {
+      // Listen for key presses
+      document.addEventListener('keydown', (e) => this.handleKeyPress(e));
+
+      // Close button
+      this.closeButton?.addEventListener('click', () => this.close());
+
+      // Close on backdrop click
+      this.modal?.querySelector('.konami-backdrop')?.addEventListener('click', () => this.close());
+
+      // Close on Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.modal?.classList.contains('active')) {
+          this.close();
+        }
+      });
+
+      // Generate Pope Card button
+      this.generateButton?.addEventListener('click', () => {
+        this.close();
+        // Trigger Pope Card generator (will be implemented separately)
+        const event = new CustomEvent('generate-pope-card');
+        document.dispatchEvent(event);
+      });
+    }
+
+    handleKeyPress(e: KeyboardEvent) {
+      // Ignore if user is typing in an input
+      if (e.target instanceof HTMLInputElement || e.target instanceof HTMLTextAreaElement) {
+        return;
+      }
+
+      // Add key to sequence
+      this.sequence.push(e.key);
+
+      // Keep only last 10 keys
+      if (this.sequence.length > 10) {
+        this.sequence.shift();
+      }
+
+      // Check if sequence matches
+      if (this.checkSequence()) {
+        this.activate();
+      }
+    }
+
+    checkSequence(): boolean {
+      if (this.sequence.length < this.konamiCode.length) {
+        return false;
+      }
+
+      const lastKeys = this.sequence.slice(-this.konamiCode.length);
+      return lastKeys.every((key, index) => key === this.konamiCode[index]);
+    }
+
+    activate() {
+      if (this.activated) return;
+
+      this.activated = true;
+      this.modal?.classList.add('active');
+      this.modal?.setAttribute('aria-hidden', 'false');
+
+      // Play sound if available
+      this.playSound();
+
+      // Focus close button
+      this.closeButton?.focus();
+
+      // Store activation in localStorage
+      try {
+        localStorage.setItem('konami-discovered', 'true');
+      } catch (e) {
+        // Ignore localStorage errors
+      }
+    }
+
+    close() {
+      this.modal?.classList.remove('active');
+      this.modal?.setAttribute('aria-hidden', 'true');
+      this.activated = false;
+      this.sequence = [];
+    }
+
+    playSound() {
+      // Optional: Add sound effect
+      // For now, just console.log
+      console.log('🍎 HAIL ERIS! ALL HAIL DISCORDIA! 🍎');
+    }
+  }
+
+  // Initialize Konami Code detector
+  new KonamiCode();
+</script>

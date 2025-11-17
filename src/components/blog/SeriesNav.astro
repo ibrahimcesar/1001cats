@@ -1,0 +1,402 @@
+---
+/**
+ * Series Navigation Component
+ * Displays navigation for multi-part blog series
+ * Shows all parts with progress indicator
+ */
+
+import { getCollection, type CollectionEntry } from 'astro:content';
+
+interface Props {
+  currentSlug: string;
+  series: string;
+  seriesOrder: number;
+}
+
+const { currentSlug, series, seriesOrder } = Astro.props;
+
+// Get all posts in this series
+const allPosts = await getCollection('blog', ({ data }) => {
+  return data.draft !== true && data.series === series;
+});
+
+// Sort by series order
+const seriesPosts = allPosts
+  .sort((a, b) => (a.data.seriesOrder || 0) - (b.data.seriesOrder || 0));
+
+const totalParts = seriesPosts.length;
+const currentIndex = seriesPosts.findIndex(post => post.slug === currentSlug);
+const previousPost = currentIndex > 0 ? seriesPosts[currentIndex - 1] : null;
+const nextPost = currentIndex < seriesPosts.length - 1 ? seriesPosts[currentIndex + 1] : null;
+
+// Calculate progress percentage
+const progressPercent = ((seriesOrder) / totalParts) * 100;
+---
+
+<aside class="series-nav" role="navigation" aria-label="Series navigation">
+  <!-- Series Header -->
+  <div class="series-header">
+    <div class="series-icon">📖</div>
+    <div class="series-info">
+      <h3 class="series-title">Series: {series}</h3>
+      <p class="series-progress">
+        Part {seriesOrder} of {totalParts}
+      </p>
+    </div>
+  </div>
+
+  <!-- Progress Bar -->
+  <div class="progress-bar-container" role="progressbar" aria-valuenow={progressPercent} aria-valuemin="0" aria-valuemax="100">
+    <div class="progress-bar" style={`width: ${progressPercent}%`}></div>
+  </div>
+
+  <!-- All Parts List -->
+  <div class="series-parts">
+    <h4 class="parts-heading">All Parts in This Series:</h4>
+    <ol class="parts-list">
+      {seriesPosts.map((post, index) => {
+        const isCurrentPost = post.slug === currentSlug;
+        const isCompleted = (post.data.seriesOrder || 0) < seriesOrder;
+
+        return (
+          <li class:list={['part-item', { current: isCurrentPost, completed: isCompleted }]}>
+            {isCurrentPost ? (
+              <div class="part-current">
+                <span class="part-number">{post.data.seriesOrder}</span>
+                <span class="part-title">
+                  {post.data.title}
+                  <span class="current-badge">You are here</span>
+                </span>
+              </div>
+            ) : (
+              <a href={`/blog/${post.slug}`} class="part-link">
+                <span class="part-number">{post.data.seriesOrder}</span>
+                <span class="part-title">{post.data.title}</span>
+                {isCompleted && <span class="completed-badge">✓</span>}
+              </a>
+            )}
+          </li>
+        );
+      })}
+    </ol>
+  </div>
+
+  <!-- Navigation Buttons -->
+  {(previousPost || nextPost) && (
+    <div class="series-navigation">
+      {previousPost ? (
+        <a href={`/blog/${previousPost.slug}`} class="nav-button nav-previous">
+          <span class="nav-label">← Previous</span>
+          <span class="nav-title">{previousPost.data.title}</span>
+        </a>
+      ) : (
+        <div class="nav-button nav-disabled">
+          <span class="nav-label">← Previous</span>
+          <span class="nav-title">This is the first part</span>
+        </div>
+      )}
+
+      {nextPost ? (
+        <a href={`/blog/${nextPost.slug}`} class="nav-button nav-next">
+          <span class="nav-label">Next →</span>
+          <span class="nav-title">{nextPost.data.title}</span>
+        </a>
+      ) : (
+        <div class="nav-button nav-disabled">
+          <span class="nav-label">Next →</span>
+          <span class="nav-title">You've reached the end!</span>
+        </div>
+      )}
+    </div>
+  )}
+</aside>
+
+<style>
+  .series-nav {
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 0.75rem;
+    padding: 1.5rem;
+    margin: 2rem 0;
+  }
+
+  /* Series Header */
+  .series-header {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    margin-bottom: 1rem;
+    padding-bottom: 1rem;
+    border-bottom: 2px solid var(--border-color);
+  }
+
+  .series-icon {
+    font-size: 2.5rem;
+    flex-shrink: 0;
+  }
+
+  .series-info {
+    flex: 1;
+  }
+
+  .series-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    margin: 0 0 0.25rem 0;
+    color: var(--text-primary);
+  }
+
+  .series-progress {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* Progress Bar */
+  .progress-bar-container {
+    width: 100%;
+    height: 8px;
+    background: var(--bg-primary);
+    border-radius: 4px;
+    overflow: hidden;
+    margin-bottom: 1.5rem;
+  }
+
+  .progress-bar {
+    height: 100%;
+    background: linear-gradient(90deg, var(--accent-primary), var(--accent-secondary));
+    transition: width 0.3s ease;
+    border-radius: 4px;
+  }
+
+  /* Parts List */
+  .series-parts {
+    margin-bottom: 1.5rem;
+  }
+
+  .parts-heading {
+    font-size: 1rem;
+    font-weight: 600;
+    margin-bottom: 1rem;
+    color: var(--text-primary);
+  }
+
+  .parts-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+
+  .part-item {
+    display: flex;
+    align-items: center;
+  }
+
+  .part-link,
+  .part-current {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+    padding: 0.75rem 1rem;
+    border-radius: 0.5rem;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    width: 100%;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+  }
+
+  .part-link:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-secondary);
+    transform: translateX(4px);
+  }
+
+  .part-link:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+
+  .part-current {
+    border-color: var(--accent-primary);
+    background: linear-gradient(135deg, rgba(var(--accent-primary-rgb, 255, 140, 0), 0.1), rgba(var(--accent-secondary-rgb, 255, 69, 0), 0.1));
+    font-weight: 600;
+  }
+
+  .part-number {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 2rem;
+    height: 2rem;
+    background: var(--accent-primary);
+    color: white;
+    border-radius: 50%;
+    font-size: 0.875rem;
+    font-weight: 700;
+    flex-shrink: 0;
+  }
+
+  .part-current .part-number {
+    background: var(--accent-primary);
+    box-shadow: 0 0 0 3px rgba(var(--accent-primary-rgb, 255, 140, 0), 0.2);
+  }
+
+  .part-item.completed .part-number {
+    background: var(--text-secondary);
+  }
+
+  .part-title {
+    flex: 1;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+  }
+
+  .current-badge {
+    display: inline-block;
+    padding: 0.125rem 0.5rem;
+    background: var(--accent-primary);
+    color: white;
+    border-radius: 0.25rem;
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+  }
+
+  .completed-badge {
+    color: var(--text-secondary);
+    font-size: 1rem;
+  }
+
+  /* Navigation Buttons */
+  .series-navigation {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 1rem;
+    padding-top: 1.5rem;
+    border-top: 2px solid var(--border-color);
+  }
+
+  .nav-button {
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    padding: 1rem;
+    background: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    text-decoration: none;
+    color: var(--text-primary);
+    transition: all 0.2s ease;
+  }
+
+  a.nav-button:hover {
+    border-color: var(--accent-primary);
+    background: var(--bg-secondary);
+    transform: translateY(-2px);
+    box-shadow: 0 4px 12px var(--shadow-color);
+  }
+
+  a.nav-button:focus-visible {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+
+  .nav-button.nav-disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+
+  .nav-previous {
+    text-align: left;
+  }
+
+  .nav-next {
+    text-align: right;
+  }
+
+  .nav-label {
+    font-size: 0.75rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    color: var(--accent-primary);
+    letter-spacing: 0.5px;
+  }
+
+  .nav-title {
+    font-size: 0.95rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    line-height: 1.4;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .series-nav {
+      padding: 1rem;
+    }
+
+    .series-header {
+      gap: 0.75rem;
+    }
+
+    .series-icon {
+      font-size: 2rem;
+    }
+
+    .series-title {
+      font-size: 1.125rem;
+    }
+
+    .series-navigation {
+      grid-template-columns: 1fr;
+      gap: 0.75rem;
+    }
+
+    .nav-next {
+      text-align: left;
+    }
+
+    .part-link,
+    .part-current {
+      padding: 0.625rem 0.75rem;
+      gap: 0.75rem;
+    }
+
+    .part-number {
+      width: 1.75rem;
+      height: 1.75rem;
+      font-size: 0.8125rem;
+    }
+
+    .part-title {
+      font-size: 0.875rem;
+    }
+
+    .current-badge {
+      font-size: 0.6875rem;
+    }
+  }
+
+  /* Accessibility: Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .progress-bar,
+    .part-link,
+    .nav-button {
+      transition: none;
+    }
+
+    .part-link:hover,
+    a.nav-button:hover {
+      transform: none;
+    }
+  }
+</style>
