@@ -1,0 +1,250 @@
+---
+/**
+ * Chaos/Order Balance Indicator
+ * Shows the cosmic balance between Chaos and Order
+ * Fluctuates randomly based on quantum uncertainty
+ */
+---
+
+<div class="chaos-order-widget" id="chaos-order-widget">
+  <div class="chaos-order-header">
+    <span class="chaos-label">🌀 Chaos</span>
+    <span class="balance-icon">⚖️</span>
+    <span class="order-label">Order 📐</span>
+  </div>
+
+  <div class="balance-bar">
+    <div class="chaos-fill" id="chaos-fill"></div>
+    <div class="order-fill" id="order-fill"></div>
+    <div class="balance-marker" id="balance-marker">☯️</div>
+  </div>
+
+  <div class="balance-reading" id="balance-reading">
+    Calculating cosmic balance...
+  </div>
+</div>
+
+<script>
+  class ChaosOrderBalance {
+    private chaosFill: HTMLElement | null = null;
+    private orderFill: HTMLElement | null = null;
+    private marker: HTMLElement | null = null;
+    private reading: HTMLElement | null = null;
+    private chaosLevel: number = 50; // Start balanced
+    private intervalId: number | null = null;
+
+    constructor() {
+      this.chaosFill = document.getElementById('chaos-fill');
+      this.orderFill = document.getElementById('order-fill');
+      this.marker = document.getElementById('balance-marker');
+      this.reading = document.getElementById('balance-reading');
+
+      this.initialize();
+    }
+
+    private initialize(): void {
+      // Initial random state
+      this.chaosLevel = 30 + Math.random() * 40; // 30-70% to start somewhat balanced
+      this.updateDisplay();
+
+      // Fluctuate periodically
+      this.startFluctuation();
+    }
+
+    private startFluctuation(): void {
+      // Fluctuate every 3-7 seconds
+      const fluctuate = () => {
+        this.fluctuate();
+        const nextInterval = 3000 + Math.random() * 4000;
+        this.intervalId = window.setTimeout(fluctuate, nextInterval);
+      };
+
+      fluctuate();
+    }
+
+    private fluctuate(): void {
+      // Random walk: change by -10 to +10
+      const change = (Math.random() - 0.5) * 20;
+      this.chaosLevel = Math.max(0, Math.min(100, this.chaosLevel + change));
+
+      // Occasionally have dramatic shifts (23% chance, of course)
+      if (Math.random() < 0.23) {
+        const dramaticShift = (Math.random() - 0.5) * 40;
+        this.chaosLevel = Math.max(0, Math.min(100, this.chaosLevel + dramaticShift));
+      }
+
+      this.updateDisplay();
+    }
+
+    private updateDisplay(): void {
+      const orderLevel = 100 - this.chaosLevel;
+
+      // Update fills
+      if (this.chaosFill) {
+        this.chaosFill.style.width = `${this.chaosLevel}%`;
+      }
+      if (this.orderFill) {
+        this.orderFill.style.width = `${orderLevel}%`;
+      }
+
+      // Update marker position
+      if (this.marker) {
+        this.marker.style.left = `${this.chaosLevel}%`;
+      }
+
+      // Update reading text
+      if (this.reading) {
+        this.reading.textContent = this.getReadingText();
+      }
+    }
+
+    private getReadingText(): string {
+      if (this.chaosLevel < 20) {
+        return 'Extreme Order - Beware of Bureaucracy!';
+      } else if (this.chaosLevel < 40) {
+        return 'Order Dominant - Things are too predictable';
+      } else if (this.chaosLevel < 60) {
+        return 'Balanced - The Sacred Chao is pleased';
+      } else if (this.chaosLevel < 80) {
+        return 'Chaos Dominant - Embrace the disorder!';
+      } else {
+        return 'Extreme Chaos - Hail Eris! All Hail Discordia!';
+      }
+    }
+
+    destroy(): void {
+      if (this.intervalId) {
+        clearTimeout(this.intervalId);
+      }
+    }
+  }
+
+  // Initialize
+  const balance = new ChaosOrderBalance();
+
+  // Cleanup
+  window.addEventListener('beforeunload', () => {
+    balance.destroy();
+  });
+</script>
+
+<style>
+  .chaos-order-widget {
+    position: fixed;
+    bottom: 1rem;
+    left: 1rem;
+    z-index: 1000;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    padding: 1rem;
+    min-width: 250px;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    transition: transform 0.3s ease;
+  }
+
+  .chaos-order-widget:hover {
+    transform: scale(1.05);
+  }
+
+  .chaos-order-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 0.75rem;
+    font-size: 0.875rem;
+    font-weight: 600;
+  }
+
+  .chaos-label {
+    color: #ff6b6b;
+  }
+
+  .balance-icon {
+    font-size: 1.2em;
+  }
+
+  .order-label {
+    color: #4ecdc4;
+  }
+
+  .balance-bar {
+    position: relative;
+    height: 30px;
+    background: var(--bg-primary);
+    border: 1px solid var(--border-color);
+    border-radius: 15px;
+    overflow: hidden;
+    margin-bottom: 0.75rem;
+  }
+
+  .chaos-fill {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(90deg, #ff6b6b 0%, #ee5a6f 100%);
+    transition: width 1s ease;
+  }
+
+  .order-fill {
+    position: absolute;
+    right: 0;
+    top: 0;
+    height: 100%;
+    background: linear-gradient(270deg, #4ecdc4 0%, #44a8b3 100%);
+    transition: width 1s ease;
+  }
+
+  .balance-marker {
+    position: absolute;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 1.5rem;
+    transition: left 1s ease;
+    filter: drop-shadow(0 0 4px rgba(0, 0, 0, 0.5));
+    z-index: 10;
+  }
+
+  .balance-reading {
+    font-size: 0.75rem;
+    text-align: center;
+    color: var(--text-secondary);
+    font-style: italic;
+    line-height: 1.3;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .chaos-order-widget:hover {
+      transform: none;
+    }
+
+    .chaos-fill,
+    .order-fill,
+    .balance-marker {
+      transition: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .chaos-order-widget {
+      bottom: 0.5rem;
+      left: 0.5rem;
+      right: 0.5rem;
+      min-width: auto;
+      padding: 0.75rem;
+    }
+
+    .chaos-order-header {
+      font-size: 0.75rem;
+    }
+
+    .balance-bar {
+      height: 25px;
+    }
+
+    .balance-marker {
+      font-size: 1.2rem;
+    }
+  }
+</style>

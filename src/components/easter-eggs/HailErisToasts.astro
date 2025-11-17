@@ -1,0 +1,163 @@
+---
+/**
+ * Random "Hail Eris!" Toast Messages
+ * Displays random Discordian messages at unpredictable intervals
+ */
+---
+
+<div id="hail-eris-container"></div>
+
+<script>
+  class HailErisToasts {
+    private container: HTMLElement | null = null;
+    private messages: string[] = [
+      '🍎 Hail Eris!',
+      '🍎 All Hail Discordia!',
+      '☯️ The Sacred Chao smiles upon you',
+      '🎭 Kallisti! (To the prettiest one)',
+      '5️⃣ The Law of Fives is at work',
+      '🌀 Embrace the chaos!',
+      '🔮 The number 23 is watching',
+      '👁️ There is no Goddess but Goddess',
+      '🎪 You are a Pope. Act like one.',
+      '🃏 Nothing is true, everything is permitted',
+      '⚡ Fnord!',
+      '🌙 It is a joyful night tonight',
+      '🎲 The Illuminati are everywhere',
+      '🦄 Consult your pineal gland',
+    ];
+    private timeoutId: number | null = null;
+
+    constructor() {
+      this.container = document.getElementById('hail-eris-container');
+      this.scheduleNextToast();
+    }
+
+    private scheduleNextToast(): void {
+      // Random interval between 30 seconds and 5 minutes
+      const minDelay = 30000; // 30 seconds
+      const maxDelay = 300000; // 5 minutes
+      const delay = minDelay + Math.random() * (maxDelay - minDelay);
+
+      this.timeoutId = window.setTimeout(() => {
+        this.showToast();
+        this.scheduleNextToast();
+      }, delay);
+    }
+
+    private showToast(): void {
+      if (!this.container) return;
+
+      // Get random message
+      const message = this.messages[Math.floor(Math.random() * this.messages.length)];
+
+      // Create toast element
+      const toast = document.createElement('div');
+      toast.className = 'hail-eris-toast';
+      toast.textContent = message;
+
+      // Add to container
+      this.container.appendChild(toast);
+
+      // Animate in
+      setTimeout(() => toast.classList.add('visible'), 100);
+
+      // Animate out and remove
+      setTimeout(() => {
+        toast.classList.remove('visible');
+        setTimeout(() => toast.remove(), 300);
+      }, 4000);
+    }
+
+    destroy(): void {
+      if (this.timeoutId) {
+        clearTimeout(this.timeoutId);
+      }
+    }
+  }
+
+  // Check if user wants toasts (can be disabled via localStorage)
+  const toastsEnabled = localStorage.getItem('hail-eris-toasts') !== 'disabled';
+
+  if (toastsEnabled) {
+    const toasts = new HailErisToasts();
+
+    window.addEventListener('beforeunload', () => {
+      toasts.destroy();
+    });
+  }
+
+  // Add method to disable toasts
+  (window as any).disableErisToasts = () => {
+    localStorage.setItem('hail-eris-toasts', 'disabled');
+    console.log('Hail Eris toasts disabled. Reload the page to stop them.');
+  };
+
+  (window as any).enableErisToasts = () => {
+    localStorage.removeItem('hail-eris-toasts');
+    console.log('Hail Eris toasts enabled. Reload the page to start them.');
+  };
+
+  console.log('💡 Tip: Run disableErisToasts() in console to stop random messages');
+</script>
+
+<style>
+  #hail-eris-container {
+    position: fixed;
+    top: 6rem;
+    right: 2rem;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    gap: 0.5rem;
+    pointer-events: none;
+  }
+
+  .hail-eris-toast {
+    background: linear-gradient(135deg,
+      rgba(255, 107, 107, 0.95) 0%,
+      rgba(238, 90, 111, 0.95) 100%
+    );
+    color: white;
+    padding: 1rem 1.5rem;
+    border-radius: 0.5rem;
+    font-weight: 600;
+    font-size: 0.9375rem;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.3);
+    opacity: 0;
+    transform: translateX(100px);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+    max-width: 300px;
+    backdrop-filter: blur(10px);
+  }
+
+  .hail-eris-toast.visible {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .hail-eris-toast {
+      transition: opacity 0.3s ease;
+      transform: none !important;
+    }
+
+    .hail-eris-toast.visible {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    #hail-eris-container {
+      top: 5rem;
+      right: 1rem;
+      left: 1rem;
+    }
+
+    .hail-eris-toast {
+      max-width: none;
+      padding: 0.875rem 1.25rem;
+      font-size: 0.875rem;
+    }
+  }
+</style>

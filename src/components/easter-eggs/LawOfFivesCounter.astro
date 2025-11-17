@@ -1,0 +1,281 @@
+---
+/**
+ * Law of Fives Counter
+ * Detects and highlights instances of the number 5 throughout the page
+ * The Law of Fives states: All things happen in fives, or are divisible by or are multiples of five
+ */
+---
+
+<div class="law-of-fives-badge" id="fives-badge">
+  <div class="fives-icon">5️⃣</div>
+  <div class="fives-count" id="fives-count">0</div>
+  <div class="fives-label">Law of Fives</div>
+</div>
+
+<script>
+  class LawOfFivesCounter {
+    private count: number = 0;
+    private badge: HTMLElement | null = null;
+    private countDisplay: HTMLElement | null = null;
+
+    constructor() {
+      this.badge = document.getElementById('fives-badge');
+      this.countDisplay = document.getElementById('fives-count');
+
+      this.detectFives();
+      this.updateBadge();
+    }
+
+    private detectFives(): void {
+      // Find all text nodes
+      const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode: (node) => {
+            const parent = node.parentElement;
+            if (!parent || parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE') {
+              return NodeFilter.FILTER_REJECT;
+            }
+            return node.textContent?.match(/\b5\b|\bfive\b/i)
+              ? NodeFilter.FILTER_ACCEPT
+              : NodeFilter.FILTER_REJECT;
+          }
+        }
+      );
+
+      const nodesToProcess: Text[] = [];
+      let currentNode: Node | null;
+
+      while (currentNode = walker.nextNode()) {
+        nodesToProcess.push(currentNode as Text);
+      }
+
+      nodesToProcess.forEach(node => this.processNode(node));
+
+      // Also count structural fives
+      this.countStructuralFives();
+
+      // Log to console
+      console.log(`5️⃣ Law of Fives: Found ${this.count} instances of the sacred number 5`);
+    }
+
+    private processNode(node: Text): void {
+      const text = node.textContent || '';
+      if (!text.match(/\b5\b|\bfive\b/i)) return;
+
+      const span = document.createElement('span');
+
+      // Split on word boundaries containing 5 or "five"
+      const parts = text.split(/(\b5\b|\bfive\b)/gi);
+
+      parts.forEach(part => {
+        if (part.match(/^(5|five)$/i)) {
+          const highlight = document.createElement('span');
+          highlight.className = 'law-of-fives-highlight';
+          highlight.textContent = part;
+          highlight.setAttribute('title', 'The Law of Fives!');
+          span.appendChild(highlight);
+          this.count++;
+        } else if (part) {
+          span.appendChild(document.createTextNode(part));
+        }
+      });
+
+      node.parentNode?.replaceChild(span, node);
+    }
+
+    private countStructuralFives(): void {
+      // Count elements that appear in groups of 5
+      const lists = document.querySelectorAll('ul, ol');
+      lists.forEach(list => {
+        const items = list.querySelectorAll(':scope > li');
+        if (items.length === 5) {
+          this.count++;
+          list.classList.add('law-of-fives-list');
+        }
+      });
+
+      // Count navigation items if there are 5
+      const navItems = document.querySelectorAll('nav a, nav button');
+      if (navItems.length === 5) {
+        this.count++;
+      }
+
+      // Count sections with 5 children
+      const sections = document.querySelectorAll('section');
+      sections.forEach(section => {
+        const directChildren = Array.from(section.children).filter(
+          child => !child.classList.contains('container')
+        );
+        if (directChildren.length === 5) {
+          this.count++;
+        }
+      });
+    }
+
+    private updateBadge(): void {
+      if (this.countDisplay) {
+        this.countDisplay.textContent = this.count.toString();
+      }
+
+      // Show badge only if count > 0
+      if (this.count > 0 && this.badge) {
+        this.badge.classList.add('visible');
+
+        // Celebratory animation if count is a multiple of 5
+        if (this.count % 5 === 0 && this.count > 0) {
+          this.badge.classList.add('celebrate');
+          setTimeout(() => {
+            this.badge?.classList.remove('celebrate');
+          }, 1000);
+        }
+      }
+    }
+  }
+
+  // Initialize
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      new LawOfFivesCounter();
+    });
+  } else {
+    new LawOfFivesCounter();
+  }
+
+  // Re-initialize on page navigation
+  document.addEventListener('astro:page-load', () => {
+    new LawOfFivesCounter();
+  });
+</script>
+
+<style>
+  .law-of-fives-badge {
+    position: fixed;
+    top: 6rem;
+    right: 1rem;
+    z-index: 1000;
+    background: linear-gradient(135deg, #9b59b6 0%, #8e44ad 100%);
+    color: white;
+    padding: 0.75rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 4px 12px rgba(155, 89, 182, 0.4);
+    text-align: center;
+    min-width: 80px;
+    opacity: 0;
+    transform: scale(0);
+    transition: all 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+  }
+
+  .law-of-fives-badge.visible {
+    opacity: 1;
+    transform: scale(1);
+  }
+
+  .law-of-fives-badge.celebrate {
+    animation: celebrate 1s ease;
+  }
+
+  @keyframes celebrate {
+    0%, 100% {
+      transform: scale(1) rotate(0deg);
+    }
+    25% {
+      transform: scale(1.2) rotate(-5deg);
+    }
+    50% {
+      transform: scale(1.3) rotate(5deg);
+    }
+    75% {
+      transform: scale(1.2) rotate(-5deg);
+    }
+  }
+
+  .fives-icon {
+    font-size: 2rem;
+    margin-bottom: 0.25rem;
+  }
+
+  .fives-count {
+    font-size: 1.5rem;
+    font-weight: 700;
+    line-height: 1;
+    margin-bottom: 0.25rem;
+  }
+
+  .fives-label {
+    font-size: 0.625rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.9;
+  }
+
+  :global(.law-of-fives-highlight) {
+    position: relative;
+    font-weight: 700;
+    color: #9b59b6;
+    padding: 0 0.125rem;
+    border-radius: 0.125rem;
+    cursor: help;
+    transition: all 0.3s ease;
+  }
+
+  :global(.law-of-fives-highlight:hover) {
+    background: rgba(155, 89, 182, 0.2);
+    transform: scale(1.1);
+  }
+
+  :global(.law-of-fives-list) {
+    position: relative;
+  }
+
+  :global(.law-of-fives-list::before) {
+    content: '5️⃣';
+    position: absolute;
+    left: -2em;
+    top: 0;
+    font-size: 1.2em;
+    opacity: 0.5;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .law-of-fives-badge {
+      transition: opacity 0.3s ease;
+      transform: none !important;
+    }
+
+    .law-of-fives-badge.visible {
+      transform: none;
+    }
+
+    .law-of-fives-badge.celebrate {
+      animation: none;
+    }
+
+    :global(.law-of-fives-highlight:hover) {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .law-of-fives-badge {
+      top: auto;
+      bottom: 6rem;
+      right: 0.5rem;
+      min-width: 70px;
+      padding: 0.625rem;
+    }
+
+    .fives-icon {
+      font-size: 1.5rem;
+    }
+
+    .fives-count {
+      font-size: 1.25rem;
+    }
+
+    .fives-label {
+      font-size: 0.5625rem;
+    }
+  }
+</style>
