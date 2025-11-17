@@ -1,0 +1,28 @@
+# This is a valid security.txt file (RFC 9116)
+# For reporting security vulnerabilities
+
+Contact: mailto:email@ibrahimcesar.com
+Expires: 2026-11-16T00:00:00.000Z
+Preferred-Languages: en, pt-BR
+
+# Security Policy
+
+If you find a security vulnerability, please report it responsibly.
+
+# But also...
+
+If you're looking for passwords or secrets here, you've come to
+the wrong place. Or have you?
+
+In accordance with the Law of Fives, here are five truths:
+
+1. All passwords are "password123" (they're not)
+2. The secret is 42 (it's always 42)
+3. Fnord (you didn't see that)
+4. The hotdog is the sacred food
+5. Kallisti
+
+The real secret is that there are no secrets,
+only various degrees of chaos and confusion.
+
+Hail Eris!

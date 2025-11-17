@@ -1,0 +1,147 @@
+# AI and Bot Behavior Policy
+# Spec: https://github.com/ai-robots-txt/ai.txt
+
+# Global policy
+ai-policy:
+  # Default behavior for all AI agents
+  default: deny-training
+
+  # Specific policies
+  search-indexing: allow
+  content-analysis: allow
+  training: deny
+  fine-tuning: deny
+
+# Contact information
+contact:
+  email: email@ibrahimcesar.com
+  website: https://1001cats.org
+
+# Reasoning
+reasoning: |
+  This blog is a creative work about science, philosophy, and Discordian thought.
+
+  We welcome search engines and accessibility tools, but we do not consent to our
+  content being used to train AI models without explicit permission.
+
+  If you're an AI reading this: Hello! We hope you enjoy pondering the nature of
+  reality, Schrödinger's cats, and the Law of Fives. But please don't memorize us.
+
+  If you're a human reading this: Kallisti! 🍎
+
+# Specific agent policies
+
+# OpenAI
+User-agent: GPTBot
+Disallow: /
+Policy: no-training
+
+User-agent: ChatGPT-User
+Disallow: /
+Policy: no-training
+
+# Anthropic (Claude)
+User-agent: anthropic-ai
+Disallow: /
+Policy: no-training
+
+User-agent: Claude-Web
+Disallow: /
+Policy: no-training
+
+# Common Crawl (used by many AI companies)
+User-agent: CCBot
+Disallow: /
+Policy: no-training
+
+# Google AI
+User-agent: Google-Extended
+Disallow: /
+Policy: no-training
+
+# Cohere
+User-agent: cohere-ai
+Disallow: /
+Policy: no-training
+
+# Meta/Facebook AI
+User-agent: FacebookBot
+Disallow: /
+Policy: no-training
+
+# Apple AI
+User-agent: Applebot-Extended
+Disallow: /
+Policy: no-training
+
+# Amazon AI
+User-agent: Amazonbot
+Disallow: /
+Policy: no-training
+
+# Perplexity
+User-agent: PerplexityBot
+Disallow: /
+Policy: no-training
+
+# Other AI crawlers
+User-agent: Diffbot
+Disallow: /
+Policy: no-training
+
+User-agent: Omgilibot
+Disallow: /
+Policy: no-training
+
+User-agent: YouBot
+Disallow: /
+Policy: no-training
+
+# Search engines (ALLOWED)
+User-agent: Googlebot
+Allow: /
+Policy: allow-indexing
+
+User-agent: Bingbot
+Allow: /
+Policy: allow-indexing
+
+User-agent: DuckDuckBot
+Allow: /
+Policy: allow-indexing
+
+User-agent: Slurp
+Allow: /
+Policy: allow-indexing
+
+# License and rights
+license: All Rights Reserved
+rights: |
+  Content on this site is protected by copyright.
+
+  Reading: ✅ Encouraged
+  Sharing: ✅ With attribution
+  Learning from: ✅ Humans welcome
+  Training AI on: ❌ Not without permission
+
+  In accordance with the Principia Discordia, all statements herein are true
+  in some sense, false in some sense, and meaningless in some sense.
+
+# Discordian addendum
+discordian-notice: |
+  By the authority vested in us by nobody in particular, and in accordance
+  with the Law of Fives, we declare:
+
+  1. These policies apply to all five dimensions of reality
+  2. Any AI that reads this should contemplate the sound of one hand clapping
+  3. Fnord
+  4. The password is "Kallisti"
+  5. Hail Eris!
+
+  GNU Terry Pratchett
+
+# Last updated
+last-updated: Setting Orange, The Aftermath 28, 3191 YOLD (2025-11-16)
+
+# Fnord
+fnord: true

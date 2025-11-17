@@ -1,0 +1,47 @@
+/* TEAM */
+
+Author: Ibrahim Cesar
+Site: https://1001cats.org
+Location: Brazil
+Twitter: @ibrahimcesar
+
+/* THANKS */
+
+Claude Code - For helping build this blog
+Terry Pratchett - GNU Terry Pratchett
+Douglas Adams - For teaching us about 42
+Malaclypse the Younger - For the Principia Discordia
+Omar Khayyam Ravenhurst - For spreading the good word
+Eris - Goddess of Chaos and Discord
+The Sacred Chao - For balance
+
+/* SITE */
+
+Last update: Setting Orange, The Aftermath 28, 3191 YOLD (2025/11/16)
+Standards: HTML5, CSS3, Semantic Web
+Components: Astro, TypeScript, Tailwind CSS
+Software: VS Code, Claude Code
+Hosting: AWS Amplify
+Domain: 1001cats.org
+
+/* PHILOSOPHY */
+
+This is a Discordian blog about science, philosophy,
+life, the universe, and everything (which is 42, obviously).
+
+All statements on this site are true in some sense,
+false in some sense, meaningless in some sense,
+true and false in some sense, true and meaningless
+in some sense, false and meaningless in some sense,
+and true and false and meaningless in some sense.
+
+Remember: There is no Goddess but Goddess and She is Your Goddess.
+There is no Erisian Movement but The Erisian Movement and it is
+The Erisian Movement. And every Golden Apple Corps is the beloved
+home of a Golden Worm.
+
+Hail Eris! All Hail Discordia!
+
+Fnord.
+
+5 5 5 5 5
