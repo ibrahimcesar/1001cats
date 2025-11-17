@@ -9,6 +9,7 @@ import Header from '../components/common/Header.astro';
 import Footer from '../components/common/Footer.astro';
 import Button from '../components/ui/Button.astro';
 import Card from '../components/ui/Card.astro';
+import RandomQuote from '../components/easter-eggs/RandomQuote.astro';
 import { getCollection } from 'astro:content';
 import { getCurrentTheme, getAllThemes } from '../utils/time-theme';
 
@@ -166,21 +167,11 @@ const allThemes = getAllThemes();
       </div>
     </section>
 
-    <!-- Discordian Quote -->
+    <!-- Random Discordian Quote -->
     <section class="section quote-section">
       <div class="container">
-        <Card padding="lg">
-          <blockquote class="discordian-quote">
-            <p class="quote-text">
-              "All statements are true in some sense, false in some sense, meaningless in some sense,
-              true and false in some sense, true and meaningless in some sense, false and meaningless
-              in some sense, and true and false and meaningless in some sense."
-            </p>
-            <footer class="quote-attribution">
-              — Principia Discordia
-            </footer>
-          </blockquote>
-        </Card>
+        <h2 class="section-title">Discordian Wisdom</h2>
+        <RandomQuote />
       </div>
     </section>
   </main>

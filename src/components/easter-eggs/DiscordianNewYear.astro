@@ -1,0 +1,338 @@
+---
+/**
+ * Discordian New Year (5/23) Special Styling
+ * Activates special features on May 23rd - the sacred Discordian holiday
+ */
+---
+
+<div id="discordian-new-year" data-active="false">
+  <!-- Special Banner -->
+  <div class="dny-banner" id="dny-banner">
+    <span class="dny-icon">🍎</span>
+    <span class="dny-text">Happy Discordian New Year! Hail Eris!</span>
+    <span class="dny-icon">🍎</span>
+  </div>
+
+  <!-- Golden Apple Rain Container -->
+  <div class="golden-apple-rain" id="apple-rain" aria-hidden="true"></div>
+</div>
+
+<script>
+  class DiscordianNewYear {
+    private isActive: boolean = false;
+    private banner: HTMLElement | null = null;
+    private appleRain: HTMLElement | null = null;
+    private appleInterval: number | null = null;
+
+    constructor() {
+      this.banner = document.getElementById('dny-banner');
+      this.appleRain = document.getElementById('apple-rain');
+
+      this.checkDate();
+    }
+
+    private checkDate(): void {
+      const now = new Date();
+      const month = now.getMonth() + 1; // 0-indexed
+      const day = now.getDate();
+
+      // Check if it's May 23rd (5/23)
+      if (month === 5 && day === 23) {
+        this.activate();
+      }
+    }
+
+    private activate(): void {
+      this.isActive = true;
+      const container = document.getElementById('discordian-new-year');
+      if (container) {
+        container.setAttribute('data-active', 'true');
+      }
+
+      // Show banner
+      if (this.banner) {
+        this.banner.classList.add('visible');
+      }
+
+      // Start golden apple rain
+      this.startAppleRain();
+
+      // Apply special theme
+      this.applySpecialTheme();
+
+      // Auto-ordain visitor as Pope
+      this.autoOrdainPope();
+
+      console.log('🍎 Happy Discordian New Year! You are now a Pope! 🍎');
+    }
+
+    private startAppleRain(): void {
+      if (!this.appleRain) return;
+
+      // Create apples periodically
+      this.appleInterval = window.setInterval(() => {
+        this.createApple();
+      }, 300); // New apple every 300ms
+
+      // Stop after 23 seconds (Law of Fives: 5 * 5 - 2)
+      setTimeout(() => {
+        if (this.appleInterval) {
+          clearInterval(this.appleInterval);
+        }
+        // Clear existing apples after they fall
+        setTimeout(() => {
+          if (this.appleRain) {
+            this.appleRain.innerHTML = '';
+          }
+        }, 5000);
+      }, 23000);
+    }
+
+    private createApple(): void {
+      if (!this.appleRain) return;
+
+      const apple = document.createElement('div');
+      apple.className = 'golden-apple';
+      apple.textContent = '🍎';
+
+      // Random horizontal position
+      apple.style.left = Math.random() * 100 + '%';
+
+      // Random animation duration (3-7 seconds)
+      const duration = 3 + Math.random() * 4;
+      apple.style.animationDuration = duration + 's';
+
+      // Random delay (0-1 second)
+      apple.style.animationDelay = Math.random() + 's';
+
+      this.appleRain.appendChild(apple);
+
+      // Remove apple after animation completes
+      setTimeout(() => {
+        apple.remove();
+      }, (duration + 1) * 1000);
+    }
+
+    private applySpecialTheme(): void {
+      // Add golden glow to page
+      document.documentElement.style.setProperty('--dny-glow', '0 0 20px rgba(255, 215, 0, 0.5)');
+      document.body.classList.add('discordian-new-year-active');
+    }
+
+    private autoOrdainPope(): void {
+      // Check if user has been ordained today
+      const lastOrdination = localStorage.getItem('pope-ordination-date');
+      const today = new Date().toDateString();
+
+      if (lastOrdination !== today) {
+        // Show ordination message
+        setTimeout(() => {
+          this.showOrdainationToast();
+          localStorage.setItem('pope-ordination-date', today);
+        }, 2000);
+      }
+    }
+
+    private showOrdainationToast(): void {
+      const toast = document.createElement('div');
+      toast.className = 'dny-toast';
+      toast.innerHTML = `
+        <div class="dny-toast-content">
+          <span class="dny-toast-icon">👑</span>
+          <span class="dny-toast-text">
+            By the power of Eris, you are hereby ordained as a Pope!<br>
+            <small>Happy Discordian New Year!</small>
+          </span>
+        </div>
+      `;
+
+      document.body.appendChild(toast);
+
+      // Fade in
+      setTimeout(() => toast.classList.add('visible'), 100);
+
+      // Fade out and remove
+      setTimeout(() => {
+        toast.classList.remove('visible');
+        setTimeout(() => toast.remove(), 300);
+      }, 5000);
+    }
+
+    destroy(): void {
+      if (this.appleInterval) {
+        clearInterval(this.appleInterval);
+      }
+    }
+  }
+
+  // Check for reduced motion preference
+  const prefersReducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  if (!prefersReducedMotion) {
+    const dny = new DiscordianNewYear();
+
+    window.addEventListener('beforeunload', () => {
+      dny.destroy();
+    });
+  }
+</script>
+
+<style>
+  #discordian-new-year {
+    position: relative;
+  }
+
+  /* Banner */
+  .dny-banner {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    z-index: 9999;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    color: #000;
+    padding: 1rem;
+    text-align: center;
+    font-weight: 700;
+    font-size: 1.25rem;
+    box-shadow: 0 4px 12px rgba(255, 215, 0, 0.5);
+    transform: translateY(-100%);
+    transition: transform 0.5s ease;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .dny-banner.visible {
+    transform: translateY(0);
+  }
+
+  .dny-icon {
+    font-size: 1.5em;
+    animation: spin 2s linear infinite;
+  }
+
+  @keyframes spin {
+    from { transform: rotate(0deg); }
+    to { transform: rotate(360deg); }
+  }
+
+  /* Golden Apple Rain */
+  .golden-apple-rain {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    pointer-events: none;
+    z-index: 9998;
+    overflow: hidden;
+  }
+
+  .golden-apple {
+    position: absolute;
+    top: -50px;
+    font-size: 2rem;
+    animation: fall linear forwards;
+    pointer-events: none;
+  }
+
+  @keyframes fall {
+    to {
+      transform: translateY(100vh) rotate(360deg);
+      opacity: 0;
+    }
+  }
+
+  /* Ordination Toast */
+  .dny-toast {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 10000;
+    background: linear-gradient(135deg, #ffd700 0%, #ffed4e 100%);
+    color: #000;
+    padding: 1.5rem;
+    border-radius: 0.5rem;
+    box-shadow: 0 8px 24px rgba(255, 215, 0, 0.6);
+    max-width: 400px;
+    opacity: 0;
+    transform: translateY(20px);
+    transition: all 0.3s ease;
+  }
+
+  .dny-toast.visible {
+    opacity: 1;
+    transform: translateY(0);
+  }
+
+  .dny-toast-content {
+    display: flex;
+    align-items: center;
+    gap: 1rem;
+  }
+
+  .dny-toast-icon {
+    font-size: 2rem;
+    flex-shrink: 0;
+  }
+
+  .dny-toast-text {
+    flex: 1;
+    line-height: 1.4;
+  }
+
+  .dny-toast-text small {
+    font-size: 0.875em;
+    opacity: 0.8;
+  }
+
+  /* Global effects when active */
+  :global(body.discordian-new-year-active) {
+    animation: golden-pulse 3s ease-in-out infinite;
+  }
+
+  @keyframes golden-pulse {
+    0%, 100% {
+      filter: brightness(1);
+    }
+    50% {
+      filter: brightness(1.05) saturate(1.1);
+    }
+  }
+
+  /* Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .dny-icon,
+    .golden-apple,
+    :global(body.discordian-new-year-active) {
+      animation: none !important;
+    }
+
+    .dny-banner.visible {
+      transform: translateY(0);
+      transition: none;
+    }
+
+    .dny-toast.visible {
+      transform: translateY(0);
+      transition: opacity 0.3s ease;
+    }
+  }
+
+  /* Mobile adjustments */
+  @media (max-width: 640px) {
+    .dny-banner {
+      font-size: 1rem;
+      padding: 0.75rem;
+    }
+
+    .dny-toast {
+      bottom: 1rem;
+      right: 1rem;
+      left: 1rem;
+      max-width: none;
+    }
+  }
+</style>

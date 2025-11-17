@@ -4,9 +4,18 @@
  * Foundation layout for all pages with SEO, theming, and accessibility
  */
 
+import { ViewTransitions } from 'astro:transitions';
 import '../styles/global.css';
 import '../styles/themes.css';
 import ThemeManager from '../components/interactive/ThemeManager.astro';
+import KonamiCode from '../components/easter-eggs/KonamiCode.astro';
+import FnordCounter from '../components/easter-eggs/FnordCounter.astro';
+import PopeCard from '../components/easter-eggs/PopeCard.astro';
+import DiscordianNewYear from '../components/easter-eggs/DiscordianNewYear.astro';
+import TwentyThreeEnigma from '../components/easter-eggs/TwentyThreeEnigma.astro';
+import ChaosOrderBalance from '../components/easter-eggs/ChaosOrderBalance.astro';
+import HailErisToasts from '../components/easter-eggs/HailErisToasts.astro';
+import LawOfFivesCounter from '../components/easter-eggs/LawOfFivesCounter.astro';
 
 interface Props {
   title: string;
@@ -76,6 +85,9 @@ const siteTitle = title ? `${title} | ${siteName}` : siteName;
 
     <!-- Accessibility: Color scheme meta -->
     <meta name="color-scheme" content="light dark" />
+
+    <!-- View Transitions for smooth page navigation -->
+    <ViewTransitions />
   </head>
 
   <body>
@@ -89,6 +101,16 @@ const siteTitle = title ? `${title} | ${siteName}` : siteName;
 
     <!-- Main content slot -->
     <slot />
+
+    <!-- Easter Eggs -->
+    <KonamiCode />
+    <FnordCounter />
+    <PopeCard />
+    <DiscordianNewYear />
+    <TwentyThreeEnigma />
+    <ChaosOrderBalance />
+    <HailErisToasts />
+    <LawOfFivesCounter />
 
     <!-- Inline script for initial theme (prevent flash) -->
     <script is:inline>

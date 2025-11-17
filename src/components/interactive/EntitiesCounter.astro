@@ -1,0 +1,154 @@
+---
+/**
+ * Live Entities Reading Counter
+ * Shows a random (very high) number of "entities" reading the blog
+ * with random fluctuations over time
+ */
+---
+
+<div class="entities-counter" id="entities-counter">
+  <span class="entities-icon">👁️</span>
+  <span class="entities-count" id="entities-count">0</span>
+  <span class="entities-text">entities are reading this blog right now with you</span>
+</div>
+
+<script>
+  class EntitiesCounter {
+    private counterElement: HTMLElement | null = null;
+    private count: number = 0;
+    private intervalId: number | null = null;
+
+    constructor() {
+      this.counterElement = document.getElementById('entities-count');
+      if (!this.counterElement) return;
+
+      // Initialize with a random high number (can include decimals)
+      this.count = this.generateRandomCount();
+      this.updateDisplay();
+
+      // Start fluctuating
+      this.startFluctuating();
+    }
+
+    private generateRandomCount(): number {
+      // Generate a random number between 50,000 and 500,000
+      // Include decimals for more "scientific" feel
+      const base = Math.random() * 450000 + 50000;
+      return parseFloat(base.toFixed(2));
+    }
+
+    private updateDisplay(): void {
+      if (!this.counterElement) return;
+
+      // Format number with thousands separators and decimals
+      const formatted = this.count.toLocaleString('en-US', {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+
+      this.counterElement.textContent = formatted;
+    }
+
+    private fluctuate(): void {
+      // Random change: sometimes increase, sometimes decrease
+      const change = (Math.random() - 0.5) * 1000; // Can change by up to ±500
+      this.count = Math.max(1000, this.count + change); // Never go below 1000
+
+      // Occasionally add a larger spike
+      if (Math.random() < 0.1) {
+        const spike = (Math.random() - 0.5) * 5000;
+        this.count += spike;
+      }
+
+      this.updateDisplay();
+    }
+
+    private startFluctuating(): void {
+      // Fluctuate every 2-5 seconds randomly
+      const fluctuateInterval = () => {
+        this.fluctuate();
+        const nextInterval = Math.random() * 3000 + 2000; // 2-5 seconds
+        setTimeout(fluctuateInterval, nextInterval);
+      };
+
+      fluctuateInterval();
+    }
+
+    destroy(): void {
+      if (this.intervalId) {
+        clearInterval(this.intervalId);
+      }
+    }
+  }
+
+  // Initialize on page load
+  const counter = new EntitiesCounter();
+
+  // Cleanup on page unload
+  window.addEventListener('beforeunload', () => {
+    counter.destroy();
+  });
+</script>
+
+<style>
+  .entities-counter {
+    display: inline-flex;
+    align-items: baseline;
+    gap: 0.5rem;
+    padding: 0.25rem 0.75rem;
+    background: linear-gradient(135deg,
+      rgba(255, 235, 59, 0.3) 0%,
+      rgba(255, 193, 7, 0.3) 100%
+    );
+    border-radius: 0.25rem;
+    font-size: 0.875rem;
+    line-height: 1.4;
+    margin: 1rem 0;
+  }
+
+  .entities-icon {
+    font-size: 1.2em;
+    line-height: 1;
+  }
+
+  .entities-count {
+    font-weight: 700;
+    font-size: 1.1em;
+    color: var(--accent-primary);
+    font-variant-numeric: tabular-nums;
+    min-width: 6ch;
+    text-align: right;
+    transition: transform 0.3s ease;
+  }
+
+  .entities-count:hover {
+    transform: scale(1.05);
+  }
+
+  .entities-text {
+    color: var(--text-primary);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    .entities-count {
+      transition: none;
+    }
+
+    .entities-count:hover {
+      transform: none;
+    }
+  }
+
+  @media (max-width: 640px) {
+    .entities-counter {
+      flex-direction: column;
+      align-items: flex-start;
+      gap: 0.25rem;
+      font-size: 0.8125rem;
+    }
+
+    .entities-count {
+      font-size: 1.2em;
+    }
+  }
+</style>

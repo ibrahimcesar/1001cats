@@ -9,7 +9,7 @@ import BaseLayout from '../../../layouts/BaseLayout.astro';
 import Header from '../../../components/common/Header.astro';
 import Footer from '../../../components/common/Footer.astro';
 import Card from '../../../components/ui/Card.astro';
-import Tag from '../../../components/ui/Tag.astro';
+import TagComponent from '../../../components/ui/Tag.astro';
 import { formatDate } from '../../../utils/formatDate';
 import { getReadingTime } from '../../../utils/reading-time';
 
@@ -96,14 +96,14 @@ const allTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))];
 
                     {post.data.tags && post.data.tags.length > 0 && (
                       <div class="post-tags">
-                        {post.data.tags.map((postTag) => (
-                          <Tag
+                        {post.data.tags.map((postTag: string) => (
+                          <TagComponent
                             href={`/blog/tag/${postTag}`}
                             variant={postTag === tag ? 'accent' : 'default'}
                             size="sm"
                           >
                             {postTag}
-                          </Tag>
+                          </TagComponent>
                         ))}
                       </div>
                     )}
@@ -120,12 +120,12 @@ const allTags = [...new Set(allPosts.flatMap(post => post.data.tags || []))];
         <h3 class="sidebar-title">Browse All Tags</h3>
         <div class="tags-cloud">
           {allTags.map((sidebarTag) => (
-            <Tag
+            <TagComponent
               href={`/blog/tag/${sidebarTag}`}
               variant={sidebarTag === tag ? 'accent' : 'default'}
             >
               {sidebarTag}
-            </Tag>
+            </TagComponent>
           ))}
         </div>
       </aside>

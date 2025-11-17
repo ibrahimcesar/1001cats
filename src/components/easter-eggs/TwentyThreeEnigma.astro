@@ -1,0 +1,146 @@
+---
+/**
+ * 23 Enigma Detector
+ * Highlights instances of the number 23 throughout the page
+ * The number 23 is sacred in Discordianism
+ */
+---
+
+<div id="enigma-23-detector"></div>
+
+<script>
+  class TwentyThreeEnigma {
+    private count: number = 0;
+
+    constructor() {
+      this.detectTwentyThrees();
+    }
+
+    private detectTwentyThrees(): void {
+      // Find all text nodes in the document
+      const walker = document.createTreeWalker(
+        document.body,
+        NodeFilter.SHOW_TEXT,
+        {
+          acceptNode: (node) => {
+            // Skip script and style elements
+            const parent = node.parentElement;
+            if (!parent || parent.tagName === 'SCRIPT' || parent.tagName === 'STYLE') {
+              return NodeFilter.FILTER_REJECT;
+            }
+            // Only accept nodes that contain "23"
+            return node.textContent?.includes('23')
+              ? NodeFilter.FILTER_ACCEPT
+              : NodeFilter.FILTER_REJECT;
+          }
+        }
+      );
+
+      const nodesToProcess: Text[] = [];
+      let currentNode: Node | null;
+
+      while (currentNode = walker.nextNode()) {
+        nodesToProcess.push(currentNode as Text);
+      }
+
+      // Process nodes and wrap "23" instances
+      nodesToProcess.forEach(node => this.processNode(node));
+
+      // Log count to console
+      if (this.count > 0) {
+        console.log(`🔮 23 Enigma: Found ${this.count} instances of the sacred number 23`);
+      }
+    }
+
+    private processNode(node: Text): void {
+      const text = node.textContent || '';
+      if (!text.includes('23')) return;
+
+      // Create a span to replace the text node
+      const span = document.createElement('span');
+
+      // Replace all instances of "23" with highlighted version
+      const parts = text.split(/\b(23)\b/g);
+
+      parts.forEach((part, index) => {
+        if (part === '23') {
+          const highlight = document.createElement('span');
+          highlight.className = 'enigma-23';
+          highlight.textContent = '23';
+          highlight.setAttribute('title', 'The Sacred Number!');
+          span.appendChild(highlight);
+          this.count++;
+        } else if (part) {
+          span.appendChild(document.createTextNode(part));
+        }
+      });
+
+      // Replace the original text node
+      node.parentNode?.replaceChild(span, node);
+    }
+  }
+
+  // Initialize after page load
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      new TwentyThreeEnigma();
+    });
+  } else {
+    new TwentyThreeEnigma();
+  }
+
+  // Re-initialize on page navigation (View Transitions)
+  document.addEventListener('astro:page-load', () => {
+    new TwentyThreeEnigma();
+  });
+</script>
+
+<style>
+  :global(.enigma-23) {
+    position: relative;
+    font-weight: 700;
+    color: var(--accent-primary);
+    padding: 0 0.125rem;
+    border-radius: 0.125rem;
+    cursor: help;
+    transition: all 0.3s ease;
+  }
+
+  :global(.enigma-23:hover) {
+    background: linear-gradient(135deg,
+      rgba(255, 215, 0, 0.2) 0%,
+      rgba(255, 193, 7, 0.2) 100%
+    );
+    transform: scale(1.1);
+    text-shadow: 0 0 8px currentColor;
+  }
+
+  :global(.enigma-23::before) {
+    content: '🔮';
+    position: absolute;
+    top: -1.5em;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    font-size: 0.75em;
+    opacity: 0;
+    transition: all 0.3s ease;
+    pointer-events: none;
+  }
+
+  :global(.enigma-23:hover::before) {
+    transform: translateX(-50%) scale(1);
+    opacity: 1;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    :global(.enigma-23:hover) {
+      transform: none;
+      text-shadow: none;
+    }
+
+    :global(.enigma-23::before),
+    :global(.enigma-23:hover::before) {
+      display: none;
+    }
+  }
+</style>

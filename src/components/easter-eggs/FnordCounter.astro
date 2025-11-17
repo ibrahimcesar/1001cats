@@ -1,0 +1,269 @@
+---
+/**
+ * FNORD Counter
+ * Displays a counter for hidden FNORD words
+ * FNORDs are invisible until you hover over them
+ */
+---
+
+<div class="fnord-counter" id="fnord-counter" aria-live="polite">
+  <button
+    class="fnord-button"
+    id="fnord-toggle"
+    aria-label="Toggle FNORD visibility"
+    title="Click to reveal all FNORDs"
+  >
+    <span class="fnord-icon">👁️</span>
+    <span class="fnord-count">
+      FNORDs: <span id="fnord-count-number">0</span>
+    </span>
+  </button>
+</div>
+
+<style>
+  .fnord-counter {
+    position: fixed;
+    bottom: 2rem;
+    right: 2rem;
+    z-index: 1000;
+    opacity: 0;
+    transform: translateY(20px);
+    animation: fnordSlideIn 0.5s ease forwards 1s;
+  }
+
+  @keyframes fnordSlideIn {
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+
+  .fnord-button {
+    display: flex;
+    align-items: center;
+    gap: 0.5rem;
+    padding: 0.75rem 1.25rem;
+    background: var(--bg-secondary);
+    border: 2px solid var(--border-color);
+    border-radius: 2rem;
+    color: var(--text-primary);
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 12px var(--shadow-color);
+  }
+
+  .fnord-button:hover {
+    border-color: var(--accent-primary);
+    background: var(--accent-primary);
+    color: white;
+    transform: scale(1.05);
+  }
+
+  .fnord-button:focus {
+    outline: 2px solid var(--accent-primary);
+    outline-offset: 2px;
+  }
+
+  .fnord-icon {
+    font-size: 1.25rem;
+    animation: fnordBlink 3s ease-in-out infinite;
+  }
+
+  @keyframes fnordBlink {
+    0%, 90%, 100% {
+      opacity: 1;
+    }
+    95% {
+      opacity: 0.3;
+    }
+  }
+
+  .fnord-count {
+    font-size: 0.875rem;
+    white-space: nowrap;
+  }
+
+  /* FNORD styling in content */
+  :global(.fnord) {
+    position: relative;
+    opacity: 0;
+    transition: opacity 0.3s ease;
+    user-select: none;
+    pointer-events: none;
+  }
+
+  :global(.fnord:hover),
+  :global(.fnord.revealed) {
+    opacity: 1;
+    color: var(--accent-primary);
+    font-weight: 600;
+    user-select: text;
+    pointer-events: auto;
+  }
+
+  :global(.fnord::before) {
+    content: '👁️';
+    position: absolute;
+    top: -1.5rem;
+    left: 50%;
+    transform: translateX(-50%) scale(0);
+    font-size: 1rem;
+    transition: transform 0.2s ease;
+  }
+
+  :global(.fnord:hover::before),
+  :global(.fnord.revealed::before) {
+    transform: translateX(-50%) scale(1);
+  }
+
+  /* Hide counter when no FNORDs present */
+  .fnord-counter.no-fnords {
+    display: none;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .fnord-counter {
+      bottom: 1rem;
+      right: 1rem;
+    }
+
+    .fnord-button {
+      padding: 0.625rem 1rem;
+    }
+
+    .fnord-icon {
+      font-size: 1rem;
+    }
+
+    .fnord-count {
+      font-size: 0.8125rem;
+    }
+  }
+
+  /* Accessibility: Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .fnord-counter {
+      animation: none;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .fnord-icon {
+      animation: none;
+    }
+
+    .fnord-button:hover {
+      transform: none;
+    }
+
+    :global(.fnord),
+    :global(.fnord::before) {
+      transition: none;
+    }
+  }
+</style>
+
+<script>
+  class FnordCounter {
+    private counter: HTMLElement | null;
+    private toggleButton: HTMLElement | null;
+    private countNumber: HTMLElement | null;
+    private fnords: NodeListOf<Element>;
+    private revealed: boolean = false;
+
+    constructor() {
+      this.counter = document.getElementById('fnord-counter');
+      this.toggleButton = document.getElementById('fnord-toggle');
+      this.countNumber = document.getElementById('fnord-count-number');
+      this.fnords = document.querySelectorAll('.fnord');
+
+      this.init();
+    }
+
+    init() {
+      // Count FNORDs
+      const count = this.fnords.length;
+
+      if (count === 0) {
+        this.counter?.classList.add('no-fnords');
+        return;
+      }
+
+      // Update counter
+      if (this.countNumber) {
+        this.countNumber.textContent = count.toString();
+      }
+
+      // Toggle button
+      this.toggleButton?.addEventListener('click', () => this.toggle());
+
+      // Track hover events for analytics (optional)
+      this.fnords.forEach((fnord) => {
+        fnord.addEventListener('mouseenter', () => {
+          console.log('👁️ FNORD discovered!');
+        });
+      });
+
+      // Check if user previously revealed FNORDs
+      this.checkPersistence();
+    }
+
+    toggle() {
+      this.revealed = !this.revealed;
+
+      this.fnords.forEach((fnord) => {
+        if (this.revealed) {
+          fnord.classList.add('revealed');
+        } else {
+          fnord.classList.remove('revealed');
+        }
+      });
+
+      // Update button text
+      if (this.toggleButton) {
+        const icon = this.toggleButton.querySelector('.fnord-icon');
+        if (icon) {
+          icon.textContent = this.revealed ? '👁️‍🗨️' : '👁️';
+        }
+      }
+
+      // Save preference
+      this.savePersistence();
+    }
+
+    checkPersistence() {
+      try {
+        const saved = localStorage.getItem('fnords-revealed');
+        if (saved === 'true') {
+          this.toggle();
+        }
+      } catch (e) {
+        // Ignore localStorage errors
+      }
+    }
+
+    savePersistence() {
+      try {
+        localStorage.setItem('fnords-revealed', this.revealed.toString());
+      } catch (e) {
+        // Ignore localStorage errors
+      }
+    }
+  }
+
+  // Initialize FNORD counter
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', () => {
+      new FnordCounter();
+    });
+  } else {
+    new FnordCounter();
+  }
+
+  // Re-initialize on Astro page navigation
+  document.addEventListener('astro:page-load', () => {
+    new FnordCounter();
+  });
+</script>

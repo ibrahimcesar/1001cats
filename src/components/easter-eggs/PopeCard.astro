@@ -1,0 +1,569 @@
+---
+/**
+ * Pope Card Generator
+ * Generates official Discordian Pope cards
+ * "Every man, woman, and child on this Earth is a genuine and authorized Pope"
+ */
+---
+
+<div id="pope-modal" class="pope-modal" role="dialog" aria-hidden="true" aria-labelledby="pope-title">
+  <div class="pope-backdrop"></div>
+  <div class="pope-content">
+    <button id="pope-close" class="pope-close" aria-label="Close pope card generator">×</button>
+
+    <div class="pope-inner">
+      <h2 id="pope-title" class="pope-title">🍎 Discordian Pope Card Generator 🍎</h2>
+
+      <p class="pope-intro">
+        According to the Principia Discordia, <strong>every man, woman, and child</strong> on this
+        Earth is a <strong>genuine and authorized Pope</strong> of Discordianism.
+      </p>
+
+      <div class="pope-form">
+        <label for="pope-name" class="pope-label">Your Pope Name:</label>
+        <input
+          type="text"
+          id="pope-name"
+          class="pope-input"
+          placeholder="Enter your name..."
+          maxlength="50"
+        />
+      </div>
+
+      <div class="pope-card" id="pope-card">
+        <div class="pope-card-header">
+          <div class="pope-card-symbol">🍎</div>
+          <h3 class="pope-card-title">Official Discordian Document</h3>
+        </div>
+
+        <div class="pope-card-body">
+          <div class="pope-card-seal">☯️</div>
+
+          <p class="pope-card-text">
+            <strong>This is to certify that</strong>
+          </p>
+
+          <p class="pope-card-name" id="pope-card-name">
+            [Your Name Here]
+          </p>
+
+          <p class="pope-card-text">
+            <strong>is a genuine and authorized</strong>
+          </p>
+
+          <p class="pope-card-pope">
+            POPE
+          </p>
+
+          <p class="pope-card-text">
+            <strong>of the Erisian Liberation Front</strong>
+          </p>
+
+          <p class="pope-card-church">
+            Church of Discordia
+          </p>
+
+          <p class="pope-card-footer">
+            Given by authority of the Wholly Chao
+          </p>
+
+          <div class="pope-card-number">
+            Certificate No. <span id="pope-number">00000</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="pope-actions">
+        <button id="pope-download" class="pope-button pope-button-primary">
+          📥 Download Card
+        </button>
+        <button id="pope-print" class="pope-button pope-button-secondary">
+          🖨️ Print Card
+        </button>
+        <button id="pope-share" class="pope-button pope-button-secondary">
+          📤 Share
+        </button>
+      </div>
+
+      <p class="pope-disclaimer">
+        <em>"A Discordian is Prohibited of Believing what he reads."</em>
+        <br>
+        — Principia Discordia, Malaclypse the Younger
+      </p>
+    </div>
+  </div>
+</div>
+
+<!-- Floating trigger button -->
+<button id="pope-trigger" class="pope-trigger" aria-label="Generate Pope Card" title="Become a Pope">
+  🍎
+</button>
+
+<style>
+  /* Modal styles */
+  .pope-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    z-index: 10000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: opacity 0.3s ease, visibility 0.3s ease;
+  }
+
+  .pope-modal.active {
+    opacity: 1;
+    visibility: visible;
+  }
+
+  .pope-backdrop {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.85);
+    backdrop-filter: blur(8px);
+  }
+
+  .pope-content {
+    position: relative;
+    max-width: 700px;
+    width: 90%;
+    max-height: 90vh;
+    overflow-y: auto;
+    background: var(--bg-primary);
+    border: 3px solid var(--accent-primary);
+    border-radius: 1rem;
+    padding: 2rem;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+  }
+
+  .pope-close {
+    position: absolute;
+    top: 1rem;
+    right: 1rem;
+    width: 2.5rem;
+    height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-primary);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 1.5rem;
+    font-weight: 700;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .pope-close:hover {
+    background: var(--accent-secondary);
+    transform: rotate(90deg);
+  }
+
+  .pope-inner {
+    text-align: center;
+  }
+
+  .pope-title {
+    font-size: 2rem;
+    font-weight: 800;
+    margin-bottom: 1rem;
+    color: var(--accent-primary);
+  }
+
+  .pope-intro {
+    font-size: 1rem;
+    line-height: 1.6;
+    margin-bottom: 2rem;
+    color: var(--text-secondary);
+  }
+
+  /* Form */
+  .pope-form {
+    margin-bottom: 2rem;
+  }
+
+  .pope-label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 0.5rem;
+    color: var(--text-primary);
+  }
+
+  .pope-input {
+    width: 100%;
+    max-width: 400px;
+    padding: 0.75rem 1rem;
+    font-size: 1rem;
+    border: 2px solid var(--border-color);
+    border-radius: 0.5rem;
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    transition: border-color 0.2s ease;
+  }
+
+  .pope-input:focus {
+    outline: none;
+    border-color: var(--accent-primary);
+  }
+
+  /* Pope Card */
+  .pope-card {
+    background: linear-gradient(135deg, #fffaf0, #fff5e6);
+    border: 4px double #8b4513;
+    border-radius: 0.75rem;
+    padding: 2rem;
+    margin: 2rem auto;
+    max-width: 500px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+  }
+
+  .pope-card-header {
+    border-bottom: 2px solid #8b4513;
+    padding-bottom: 1rem;
+    margin-bottom: 1.5rem;
+  }
+
+  .pope-card-symbol {
+    font-size: 3rem;
+    margin-bottom: 0.5rem;
+  }
+
+  .pope-card-title {
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: #8b4513;
+    margin: 0;
+  }
+
+  .pope-card-body {
+    position: relative;
+  }
+
+  .pope-card-seal {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 15rem;
+    opacity: 0.05;
+    z-index: 0;
+    pointer-events: none;
+  }
+
+  .pope-card-text {
+    position: relative;
+    z-index: 1;
+    font-size: 0.95rem;
+    margin: 0.75rem 0;
+    color: #333;
+  }
+
+  .pope-card-name {
+    position: relative;
+    z-index: 1;
+    font-size: 1.75rem;
+    font-weight: 800;
+    margin: 1.5rem 0;
+    color: #8b4513;
+    min-height: 2.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  .pope-card-pope {
+    position: relative;
+    z-index: 1;
+    font-size: 2.5rem;
+    font-weight: 900;
+    margin: 1.5rem 0;
+    color: #ff8c00;
+    text-transform: uppercase;
+    letter-spacing: 0.5rem;
+  }
+
+  .pope-card-church {
+    position: relative;
+    z-index: 1;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin: 1rem 0;
+    color: #8b4513;
+  }
+
+  .pope-card-footer {
+    position: relative;
+    z-index: 1;
+    font-size: 0.875rem;
+    font-style: italic;
+    margin-top: 2rem;
+    color: #666;
+  }
+
+  .pope-card-number {
+    position: relative;
+    z-index: 1;
+    font-size: 0.75rem;
+    margin-top: 1rem;
+    color: #999;
+    font-family: monospace;
+  }
+
+  /* Actions */
+  .pope-actions {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+    margin: 2rem 0;
+  }
+
+  .pope-button {
+    padding: 0.75rem 1.5rem;
+    border: none;
+    border-radius: 0.5rem;
+    font-size: 1rem;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s ease;
+  }
+
+  .pope-button-primary {
+    background: var(--accent-primary);
+    color: white;
+  }
+
+  .pope-button-primary:hover {
+    background: var(--accent-secondary);
+    transform: scale(1.05);
+  }
+
+  .pope-button-secondary {
+    background: var(--bg-secondary);
+    color: var(--text-primary);
+    border: 2px solid var(--border-color);
+  }
+
+  .pope-button-secondary:hover {
+    border-color: var(--accent-primary);
+    transform: scale(1.05);
+  }
+
+  .pope-disclaimer {
+    font-size: 0.875rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    margin-top: 2rem;
+  }
+
+  /* Floating trigger button */
+  .pope-trigger {
+    position: fixed;
+    bottom: 2rem;
+    left: 2rem;
+    width: 3.5rem;
+    height: 3.5rem;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--accent-primary);
+    color: white;
+    border: none;
+    border-radius: 50%;
+    font-size: 2rem;
+    cursor: pointer;
+    box-shadow: 0 4px 12px var(--shadow-color);
+    transition: all 0.3s ease;
+    z-index: 999;
+    animation: popeFloat 3s ease-in-out infinite;
+  }
+
+  @keyframes popeFloat {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-10px);
+    }
+  }
+
+  .pope-trigger:hover {
+    background: var(--accent-secondary);
+    transform: scale(1.1);
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .pope-content {
+      padding: 1.5rem;
+    }
+
+    .pope-card {
+      padding: 1.5rem;
+    }
+
+    .pope-card-pope {
+      font-size: 2rem;
+      letter-spacing: 0.25rem;
+    }
+
+    .pope-trigger {
+      bottom: 5rem;
+      left: 1rem;
+      width: 3rem;
+      height: 3rem;
+      font-size: 1.5rem;
+    }
+
+    .pope-actions {
+      flex-direction: column;
+    }
+  }
+
+  /* Accessibility: Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .pope-trigger {
+      animation: none;
+    }
+
+    .pope-close:hover,
+    .pope-button:hover,
+    .pope-trigger:hover {
+      transform: none;
+    }
+  }
+</style>
+
+<script>
+  class PopeCardGenerator {
+    private modal: HTMLElement | null;
+    private trigger: HTMLElement | null;
+    private closeButton: HTMLElement | null;
+    private nameInput: HTMLInputElement | null;
+    private cardName: HTMLElement | null;
+    private cardNumber: HTMLElement | null;
+    private downloadButton: HTMLElement | null;
+    private printButton: HTMLElement | null;
+    private shareButton: HTMLElement | null;
+
+    constructor() {
+      this.modal = document.getElementById('pope-modal');
+      this.trigger = document.getElementById('pope-trigger');
+      this.closeButton = document.getElementById('pope-close');
+      this.nameInput = document.getElementById('pope-name') as HTMLInputElement;
+      this.cardName = document.getElementById('pope-card-name');
+      this.cardNumber = document.getElementById('pope-number');
+      this.downloadButton = document.getElementById('pope-download');
+      this.printButton = document.getElementById('pope-print');
+      this.shareButton = document.getElementById('pope-share');
+
+      this.init();
+    }
+
+    init() {
+      // Generate random certificate number
+      this.generateCertNumber();
+
+      // Trigger button
+      this.trigger?.addEventListener('click', () => this.open());
+
+      // Close button
+      this.closeButton?.addEventListener('click', () => this.close());
+
+      // Close on backdrop
+      this.modal?.querySelector('.pope-backdrop')?.addEventListener('click', () => this.close());
+
+      // Close on Escape
+      document.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape' && this.modal?.classList.contains('active')) {
+          this.close();
+        }
+      });
+
+      // Name input
+      this.nameInput?.addEventListener('input', (e) => {
+        const target = e.target as HTMLInputElement;
+        this.updateName(target.value);
+      });
+
+      // Actions
+      this.downloadButton?.addEventListener('click', () => this.download());
+      this.printButton?.addEventListener('click', () => this.print());
+      this.shareButton?.addEventListener('click', () => this.share());
+
+      // Listen for Konami code trigger
+      document.addEventListener('generate-pope-card', () => this.open());
+    }
+
+    open() {
+      this.modal?.classList.add('active');
+      this.modal?.setAttribute('aria-hidden', 'false');
+      this.nameInput?.focus();
+    }
+
+    close() {
+      this.modal?.classList.remove('active');
+      this.modal?.setAttribute('aria-hidden', 'true');
+    }
+
+    updateName(name: string) {
+      if (this.cardName) {
+        this.cardName.textContent = name || '[Your Name Here]';
+      }
+    }
+
+    generateCertNumber() {
+      const number = Math.floor(Math.random() * 99999).toString().padStart(5, '0');
+      if (this.cardNumber) {
+        this.cardNumber.textContent = number;
+      }
+    }
+
+    download() {
+      // Note: Actual download would require html2canvas or similar library
+      alert('Download functionality would require a screenshot library. For now, use Print and save as PDF!');
+    }
+
+    print() {
+      window.print();
+    }
+
+    share() {
+      const name = this.nameInput?.value || 'Anonymous';
+      const text = `I am officially a Pope of Discordianism! Check out 1001 Schrödinger's Cats to become one yourself.`;
+
+      if (navigator.share) {
+        navigator.share({
+          title: 'I am a Discordian Pope!',
+          text: text,
+          url: window.location.href,
+        }).catch(() => {
+          this.fallbackShare(text);
+        });
+      } else {
+        this.fallbackShare(text);
+      }
+    }
+
+    fallbackShare(text: string) {
+      navigator.clipboard.writeText(text + ' ' + window.location.href).then(() => {
+        alert('Link copied to clipboard!');
+      }).catch(() => {
+        alert('Share: ' + text);
+      });
+    }
+  }
+
+  // Initialize Pope Card Generator
+  new PopeCardGenerator();
+</script>

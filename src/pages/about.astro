@@ -1,0 +1,475 @@
+---
+/**
+ * About Page
+ * Information about the blog with Discordian personality
+ */
+
+import BaseLayout from '../layouts/BaseLayout.astro';
+import Header from '../components/common/Header.astro';
+import Footer from '../components/common/Footer.astro';
+import Card from '../components/ui/Card.astro';
+import Button from '../components/ui/Button.astro';
+
+const title = 'About 1001 Schrödinger\'s Cats';
+const description = 'A Discordian exploration of science, philosophy, life, the universe, and everything';
+---
+
+<BaseLayout title={title} description={description}>
+  <Header />
+
+  <main class="main-content">
+    <div class="container">
+      <!-- Hero Section -->
+      <section class="hero-section">
+        <h1 class="page-title">
+          About 1001 Schrödinger's Cats
+        </h1>
+        <p class="page-subtitle">
+          A Discordian blog exploring the quantum superposition of existence
+        </p>
+        <div class="hero-icon">🍎</div>
+      </section>
+
+      <!-- Main Content -->
+      <section class="content-section">
+        <Card padding="lg">
+          <div class="about-content">
+            <h2 class="section-heading">What is this place?</h2>
+            <p>
+              Welcome to <strong>1001 Schrödinger's Cats</strong>, a blog that exists in a
+              perpetual state of quantum superposition between profound insight and utter nonsense—
+              until you observe it, at which point the wave function collapses into whichever
+              you were expecting anyway.
+            </p>
+            <p>
+              This is a space dedicated to exploring <strong>science</strong>, <strong>philosophy</strong>,
+              <strong>technology</strong>, and the general absurdity of existence through the lens of
+              Discordian philosophy. We embrace chaos, celebrate contradictions, and acknowledge that
+              all statements (including this one) are true in some sense, false in some sense, and
+              meaningless in some sense.
+            </p>
+          </div>
+        </Card>
+
+        <Card padding="lg">
+          <div class="about-content">
+            <h2 class="section-heading">The Law of Fives</h2>
+            <p>
+              You may notice that everything here comes in fives. This is not a coincidence because
+              <em>nothing is a coincidence</em>. The Law of Fives states that all things happen in fives,
+              or are divisible by or are multiples of five, or are somehow directly or indirectly
+              appropriate to five.
+            </p>
+            <p>
+              Therefore, you'll find:
+            </p>
+            <ul class="feature-list">
+              <li>A maximum of 5 tags per post</li>
+              <li>Exactly 5 recent posts on the homepage</li>
+              <li>5 related posts shown after each article</li>
+              <li>This list has exactly 5 items</li>
+              <li>The number five appears 5 times in this list</li>
+            </ul>
+          </div>
+        </Card>
+
+        <Card padding="lg">
+          <div class="about-content">
+            <h2 class="section-heading">Topics We Explore</h2>
+            <div class="topics-grid">
+              <div class="topic-card">
+                <span class="topic-icon">🔬</span>
+                <h3>Science</h3>
+                <p>Quantum mechanics, cosmology, biology, and the scientific method—with occasional detours into pseudoscience for comparison.</p>
+              </div>
+              <div class="topic-card">
+                <span class="topic-icon">🧠</span>
+                <h3>Philosophy</h3>
+                <p>Epistemology, consciousness, ethics, existentialism, and why we're all just brains in vats (or are we?).</p>
+              </div>
+              <div class="topic-card">
+                <span class="topic-icon">💻</span>
+                <h3>Technology</h3>
+                <p>Programming, AI, the future, and how we're building either a utopia or our doom (spoiler: yes).</p>
+              </div>
+              <div class="topic-card">
+                <span class="topic-icon">🍎</span>
+                <h3>Discordianism</h3>
+                <p>Chaos magic, Eris worship, the Sacred Chao, and the serious business of not taking things seriously.</p>
+              </div>
+              <div class="topic-card">
+                <span class="topic-icon">🌌</span>
+                <h3>Everything</h3>
+                <p>Life, the universe, and everything else that doesn't fit neatly into categories (which is most things).</p>
+              </div>
+            </div>
+          </div>
+        </Card>
+
+        <Card padding="lg">
+          <div class="about-content">
+            <h2 class="section-heading">The Time-Based Theme</h2>
+            <p>
+              This blog changes its color scheme based on your local time, creating a dynamic reading
+              experience that flows with the natural rhythm of your day:
+            </p>
+            <ul class="theme-list">
+              <li><strong>🌅 Morning (6am-12pm):</strong> Soft, warm pastels to ease you into consciousness</li>
+              <li><strong>☀️ Afternoon (12pm-6pm):</strong> Bright, energetic colors for peak productivity</li>
+              <li><strong>🌆 Evening (6pm-10pm):</strong> Warm, muted tones for winding down</li>
+              <li><strong>🌙 Night (10pm-6am):</strong> Dark mode for the night owls and insomniacs</li>
+            </ul>
+            <p>
+              Because if you're going to read about quantum superposition and the heat death of the
+              universe, you might as well do it in aesthetically appropriate lighting.
+            </p>
+          </div>
+        </Card>
+
+        <Card padding="lg">
+          <div class="about-content">
+            <h2 class="section-heading">Who Writes This?</h2>
+            <p>
+              This blog is maintained by a collection of Schrödinger's cats who are simultaneously
+              alive and dead until you finish reading a post. We are all Popes in the Discordian
+              Church, which means you are too. Congratulations on your ordination!
+            </p>
+            <p>
+              The content oscillates between deeply researched technical articles and existential
+              ramblings, often within the same paragraph. We believe in:
+            </p>
+            <ul class="belief-list">
+              <li>The scientific method (but not scientism)</li>
+              <li>Critical thinking (but not cynicism)</li>
+              <li>Humor as a form of wisdom</li>
+              <li>Embracing uncertainty and paradox</li>
+              <li>That this list should have exactly five items</li>
+            </ul>
+          </div>
+        </Card>
+
+        <Card padding="lg">
+          <div class="about-content discordian-notice">
+            <h2 class="section-heading">⚠️ Important Notice ⚠️</h2>
+            <p class="notice-text">
+              All statements on this blog are true in some sense, false in some sense, meaningless
+              in some sense, true and false in some sense, true and meaningless in some sense, false
+              and meaningless in some sense, and true and false and meaningless in some sense.
+            </p>
+            <p class="notice-attribution">
+              — A Discordian Interpretation of the Principia Discordia
+            </p>
+          </div>
+        </Card>
+      </section>
+
+      <!-- Call to Action -->
+      <section class="cta-section">
+        <Card padding="lg">
+          <div class="cta-content">
+            <h2>Join the Exploration</h2>
+            <p>
+              Ready to dive into the quantum foam of ideas? Start reading, or use the search to
+              find topics that interest you.
+            </p>
+            <div class="cta-buttons">
+              <Button href="/blog" variant="primary" size="lg">
+                Read the Blog
+              </Button>
+              <Button href="/search" variant="secondary" size="lg">
+                Search Posts
+              </Button>
+            </div>
+          </div>
+        </Card>
+      </section>
+
+      <!-- Footer Quote -->
+      <section class="footer-quote">
+        <blockquote>
+          <p class="quote-text">
+            "A Discordian is Prohibited of Believing what he reads."
+          </p>
+          <cite class="quote-author">— Principia Discordia</cite>
+        </blockquote>
+      </section>
+    </div>
+  </main>
+
+  <Footer />
+</BaseLayout>
+
+<style>
+  .main-content {
+    min-height: 100vh;
+    padding: 3rem 0;
+  }
+
+  .container {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 1rem;
+  }
+
+  /* Hero Section */
+  .hero-section {
+    text-align: center;
+    margin-bottom: 4rem;
+  }
+
+  .page-title {
+    font-size: clamp(2.5rem, 6vw, 4rem);
+    font-weight: 800;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, var(--accent-primary), var(--accent-secondary));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .page-subtitle {
+    font-size: 1.25rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+  }
+
+  .hero-icon {
+    font-size: 5rem;
+    animation: float 3s ease-in-out infinite;
+  }
+
+  @keyframes float {
+    0%, 100% {
+      transform: translateY(0);
+    }
+    50% {
+      transform: translateY(-20px);
+    }
+  }
+
+  /* Content Section */
+  .content-section {
+    display: flex;
+    flex-direction: column;
+    gap: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  .about-content {
+    line-height: 1.8;
+  }
+
+  .section-heading {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1.5rem;
+    color: var(--text-primary);
+  }
+
+  .about-content p {
+    margin-bottom: 1.5rem;
+    font-size: 1.125rem;
+  }
+
+  .about-content strong {
+    color: var(--accent-primary);
+    font-weight: 600;
+  }
+
+  /* Lists */
+  .feature-list,
+  .theme-list,
+  .belief-list {
+    list-style: none;
+    padding: 0;
+    margin: 1.5rem 0;
+  }
+
+  .feature-list li,
+  .theme-list li,
+  .belief-list li {
+    padding: 0.75rem 0 0.75rem 2rem;
+    position: relative;
+    font-size: 1.125rem;
+  }
+
+  .feature-list li::before,
+  .theme-list li::before,
+  .belief-list li::before {
+    content: '🍎';
+    position: absolute;
+    left: 0;
+    top: 0.75rem;
+  }
+
+  /* Topics Grid */
+  .topics-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 1.5rem;
+    margin-top: 2rem;
+  }
+
+  .topic-card {
+    text-align: center;
+    padding: 1.5rem;
+    background: var(--bg-primary);
+    border: 2px solid var(--border-color);
+    border-radius: 0.75rem;
+    transition: all 0.3s ease;
+  }
+
+  .topic-card:hover {
+    border-color: var(--accent-primary);
+    transform: translateY(-4px);
+    box-shadow: 0 8px 24px var(--shadow-color);
+  }
+
+  .topic-icon {
+    font-size: 3rem;
+    display: block;
+    margin-bottom: 1rem;
+  }
+
+  .topic-card h3 {
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75rem;
+    color: var(--text-primary);
+  }
+
+  .topic-card p {
+    font-size: 0.95rem;
+    color: var(--text-secondary);
+    margin: 0;
+  }
+
+  /* Discordian Notice */
+  .discordian-notice {
+    background: linear-gradient(135deg, rgba(255, 140, 0, 0.1), rgba(255, 69, 0, 0.1));
+    border: 2px solid var(--accent-primary);
+  }
+
+  .notice-text {
+    font-style: italic;
+    font-size: 1.125rem;
+    color: var(--text-primary);
+  }
+
+  .notice-attribution {
+    font-size: 1rem;
+    color: var(--text-secondary);
+    margin-top: 1rem;
+    font-weight: 500;
+  }
+
+  /* CTA Section */
+  .cta-section {
+    margin-bottom: 3rem;
+  }
+
+  .cta-content {
+    text-align: center;
+  }
+
+  .cta-content h2 {
+    font-size: 2rem;
+    font-weight: 700;
+    margin-bottom: 1rem;
+  }
+
+  .cta-content p {
+    font-size: 1.125rem;
+    color: var(--text-secondary);
+    margin-bottom: 2rem;
+  }
+
+  .cta-buttons {
+    display: flex;
+    gap: 1rem;
+    justify-content: center;
+    flex-wrap: wrap;
+  }
+
+  /* Footer Quote */
+  .footer-quote {
+    text-align: center;
+    padding: 3rem 0;
+  }
+
+  .footer-quote blockquote {
+    border-left: none;
+    padding: 0;
+    margin: 0;
+  }
+
+  .quote-text {
+    font-size: 1.5rem;
+    font-style: italic;
+    color: var(--text-secondary);
+    margin-bottom: 1rem;
+  }
+
+  .quote-author {
+    font-size: 1rem;
+    color: var(--accent-primary);
+    font-style: normal;
+  }
+
+  /* Responsive */
+  @media (max-width: 768px) {
+    .main-content {
+      padding: 2rem 0;
+    }
+
+    .hero-section {
+      margin-bottom: 3rem;
+    }
+
+    .hero-icon {
+      font-size: 3rem;
+    }
+
+    .section-heading {
+      font-size: 1.5rem;
+    }
+
+    .about-content p,
+    .feature-list li,
+    .theme-list li,
+    .belief-list li {
+      font-size: 1rem;
+    }
+
+    .topics-grid {
+      grid-template-columns: 1fr;
+    }
+
+    .cta-buttons {
+      flex-direction: column;
+      align-items: stretch;
+    }
+
+    .quote-text {
+      font-size: 1.25rem;
+    }
+  }
+
+  /* Accessibility: Respect reduced motion */
+  @media (prefers-reduced-motion: reduce) {
+    .hero-icon {
+      animation: none;
+    }
+
+    .topic-card {
+      transition: none;
+    }
+
+    .topic-card:hover {
+      transform: none;
+    }
+  }
+</style>

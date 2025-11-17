@@ -1,0 +1,45 @@
+# 1001 Schrödinger's Cats - robots.txt
+# A Discordian blog on science, philosophy, life, the universe, and everything
+
+# Allow all bots to crawl everything
+User-agent: *
+Allow: /
+
+# Sitemap location
+Sitemap: https://1001cats.com/sitemap-index.xml
+Sitemap: https://1001cats.com/sitemap-0.xml
+
+# Specific bot directives
+# Allow all major search engines
+User-agent: Googlebot
+Allow: /
+
+User-agent: Bingbot
+Allow: /
+
+User-agent: Slurp
+Allow: /
+
+User-agent: DuckDuckBot
+Allow: /
+
+# Crawl delay for polite crawling (optional)
+# Crawl-delay: 1
+
+# Block common bad bots (optional - uncomment if needed)
+# User-agent: AhrefsBot
+# Disallow: /
+
+# User-agent: SemrushBot
+# Disallow: /
+
+# User-agent: MJ12bot
+# Disallow: /
+
+# Pagefind search index (allow crawling)
+User-agent: *
+Allow: /pagefind/
+
+# Note: All statements are true in some sense, false in some sense,
+# meaningless in some sense... including this robots.txt file.
+# - A Discordian Directive
