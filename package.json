@@ -12,16 +12,16 @@
     "amplify:deploy": "astro build"
   },
   "dependencies": {
-    "@astrojs/rss": "^4.0.9",
-    "@astrojs/sitemap": "^3.2.1",
-    "@astrojs/tailwind": "^5.1.2",
+    "@astrojs/rss": "^4.0.13",
+    "@astrojs/sitemap": "^3.6.0",
+    "@astrojs/tailwind": "^6.0.2",
     "@tailwindcss/typography": "^0.5.15",
-    "astro": "^4.16.1",
+    "astro": "^5.15.9",
     "discordian-date-converter": "^5.5.5",
     "tailwindcss": "^3.4.16"
   },
   "devDependencies": {
-    "@astrojs/check": "^0.9.4",
+    "@astrojs/check": "^0.9.5",
     "pagefind": "^1.0.0",
     "typescript": "^5.6.3"
   }
